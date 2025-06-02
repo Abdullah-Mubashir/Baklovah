@@ -1,0 +1,719 @@
+<%- include('./partials/header', { title: 'Orders Management', currentPath: '/admin/orders', user: user, actionButtons: '' }) %>
+
+<div class="container-fluid px-0">
+    <!-- Order Filters -->
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-3">
+                            <select id="statusFilter" class="form-select">
+                                <option value="">All Statuses</option>
+                                <option value="placed">Placed</option>
+                                <option value="preparing">Preparing</option>
+                                <option value="ready">Ready</option>
+                                <option value="completed">Completed</option>
+                                <option value="cancelled">Cancelled</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <select id="dateFilter" class="form-select">
+                                <option value="today">Today</option>
+                                <option value="yesterday">Yesterday</option>
+                                <option value="last7days">Last 7 Days</option>
+                                <option value="last30days">Last 30 Days</option>
+                                <option value="all" selected>All Time</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <select id="sortFilter" class="form-select">
+                                <option value="newest">Newest First</option>
+                                <option value="oldest">Oldest First</option>
+                                <option value="highest">Highest Total</option>
+                                <option value="lowest">Lowest Total</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="input-group">
+                                <input type="text" id="searchFilter" class="form-control" placeholder="Search orders...">
+                                <button class="btn btn-outline-primary" type="button" id="refreshBtn">
+                                    <i class="bi bi-arrow-clockwise"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Orders Table -->
+    <div class="card">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle" id="ordersTable">
+                    <thead>
+                        <tr>
+                            <th scope="col">Order #</th>
+                            <th scope="col">Date & Time</th>
+                            <th scope="col">Customer</th>
+                            <th scope="col">Items</th>
+                            <th scope="col">Total</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Payment</th>
+                            <th scope="col" width="150">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td colspan="8" class="text-center py-4">Loading orders...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Order Details Modal -->
+<div class="modal fade" id="orderDetailsModal" tabindex="-1" aria-labelledby="orderDetailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="orderDetailsModalLabel">Order Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="orderDetailsContainer">
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <h6>Order Information</h6>
+                            <div class="mb-2">
+                                <strong>Order #:</strong> <span id="modal-order-id"></span>
+                            </div>
+                            <div class="mb-2">
+                                <strong>Date & Time:</strong> <span id="modal-order-date"></span>
+                            </div>
+                            <div class="mb-2">
+                                <strong>Status:</strong> <span id="modal-order-status"></span>
+                            </div>
+                            <div class="mb-2">
+                                <strong>Payment Status:</strong> <span id="modal-payment-status"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Customer Information</h6>
+                            <div class="mb-2">
+                                <strong>Name:</strong> <span id="modal-customer-name"></span>
+                            </div>
+                            <div class="mb-2">
+                                <strong>Email:</strong> <span id="modal-customer-email"></span>
+                            </div>
+                            <div class="mb-2">
+                                <strong>Phone:</strong> <span id="modal-customer-phone"></span>
+                            </div>
+                            <div class="mb-2">
+                                <strong>Address:</strong> <span id="modal-customer-address"></span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <h6>Order Items</h6>
+                    <div class="table-responsive mb-3">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Item</th>
+                                    <th>Quantity</th>
+                                    <th>Price</th>
+                                    <th>Subtotal</th>
+                                </tr>
+                            </thead>
+                            <tbody id="modal-order-items">
+                                <!-- Order items will be populated here -->
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colspan="3" class="text-end"><strong>Subtotal:</strong></td>
+                                    <td id="modal-subtotal"></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="3" class="text-end"><strong>Tax:</strong></td>
+                                    <td id="modal-tax"></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="3" class="text-end"><strong>Total:</strong></td>
+                                    <td id="modal-total"></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <h6>Special Instructions</h6>
+                        <p id="modal-special-instructions" class="border rounded p-2">None</p>
+                    </div>
+                    
+                    <h6>Update Order Status</h6>
+                    <div class="row mb-3">
+                        <div class="col-md-8">
+                            <select class="form-select" id="modal-status-update">
+                                <option value="placed">Placed</option>
+                                <option value="preparing">Preparing</option>
+                                <option value="ready">Ready</option>
+                                <option value="completed">Completed</option>
+                                <option value="cancelled">Cancelled</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <button class="btn btn-primary w-100" id="updateStatusBtn">Update Status</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-success" id="markAsPaidBtn">Mark as Paid</button>
+                <button type="button" class="btn btn-primary" id="printOrderBtn">
+                    <i class="bi bi-printer"></i> Print Order
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Orders Management JavaScript -->
+<script>
+    // Get token from localStorage
+    const token = localStorage.getItem('token');
+    
+    // Check if user is logged in
+    if (!token) {
+        window.location.href = '/admin';
+    }
+    
+    // Set up socket.io connection for real-time updates
+    const socket = io();
+    
+    // Listen for new orders
+    socket.on('newOrder', (order) => {
+        // Play notification sound
+        const audio = new Audio('/audio/notification.mp3');
+        audio.play();
+        
+        // Show notification
+        if (Notification.permission === 'granted') {
+            new Notification('New Order!', {
+                body: `Order #${order.id} has been placed`,
+                icon: '/img/logo.png'
+            });
+        }
+        
+        // Reload orders
+        loadOrders();
+    });
+    
+    // Listen for order status updates
+    socket.on('orderStatusUpdate', (data) => {
+        // Update the order in the table if it's displayed
+        const row = document.querySelector(`tr[data-order-id="${data.orderId}"]`);
+        if (row) {
+            const statusCell = row.querySelector('.order-status');
+            if (statusCell) {
+                statusCell.innerHTML = getStatusBadgeHTML(data.status);
+            }
+        }
+    });
+    
+    // Helper function for API calls with authentication
+    async function callApi(url, method = 'GET', data = null) {
+        const options = {
+            method,
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        };
+        
+        if (data) {
+            options.body = JSON.stringify(data);
+        }
+        
+        const response = await fetch(url, options);
+        
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || 'API request failed');
+        }
+        
+        return await response.json();
+    }
+    
+    // Format price as currency
+    function formatCurrency(price) {
+        return new Intl.NumberFormat('en-US', {
+            style: 'currency',
+            currency: 'USD'
+        }).format(price);
+    }
+    
+    // Format date and time
+    function formatDateTime(dateStr) {
+        const date = new Date(dateStr);
+        return date.toLocaleString('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric',
+            hour: 'numeric',
+            minute: 'numeric',
+            hour12: true
+        });
+    }
+    
+    // Get HTML for status badge
+    function getStatusBadgeHTML(status) {
+        let badgeClass = '';
+        
+        switch (status) {
+            case 'placed':
+                badgeClass = 'status-placed';
+                break;
+            case 'preparing':
+                badgeClass = 'status-preparing';
+                break;
+            case 'ready':
+                badgeClass = 'status-ready';
+                break;
+            case 'completed':
+                badgeClass = 'status-completed';
+                break;
+            case 'cancelled':
+                badgeClass = 'status-cancelled';
+                break;
+            default:
+                badgeClass = 'status-placed';
+        }
+        
+        return `<span class="status-badge ${badgeClass}">${status.charAt(0).toUpperCase() + status.slice(1)}</span>`;
+    }
+    
+    // Get HTML for payment status badge
+    function getPaymentBadgeHTML(isPaid) {
+        return isPaid 
+            ? '<span class="badge bg-success">Paid</span>'
+            : '<span class="badge bg-warning text-dark">Pending</span>';
+    }
+    
+    // Get date range for filter
+    function getDateRangeFilter(filterValue) {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        
+        const tomorrow = new Date(today);
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        
+        const yesterday = new Date(today);
+        yesterday.setDate(yesterday.getDate() - 1);
+        
+        const last7Days = new Date(today);
+        last7Days.setDate(last7Days.getDate() - 7);
+        
+        const last30Days = new Date(today);
+        last30Days.setDate(last30Days.getDate() - 30);
+        
+        switch (filterValue) {
+            case 'today':
+                return { startDate: today.toISOString(), endDate: tomorrow.toISOString() };
+            case 'yesterday':
+                return { startDate: yesterday.toISOString(), endDate: today.toISOString() };
+            case 'last7days':
+                return { startDate: last7Days.toISOString(), endDate: tomorrow.toISOString() };
+            case 'last30days':
+                return { startDate: last30Days.toISOString(), endDate: tomorrow.toISOString() };
+            default:
+                return {};
+        }
+    }
+    
+    // Load all orders
+    async function loadOrders() {
+        try {
+            const tableBody = document.querySelector('#ordersTable tbody');
+            tableBody.innerHTML = '<tr><td colspan="8" class="text-center py-4">Loading orders...</td></tr>';
+            
+            // Get filter values
+            const status = document.getElementById('statusFilter').value;
+            const dateFilter = document.getElementById('dateFilter').value;
+            const sortBy = document.getElementById('sortFilter').value;
+            const searchTerm = document.getElementById('searchFilter').value;
+            
+            // Build query parameters
+            let queryParams = new URLSearchParams();
+            
+            if (status) queryParams.append('status', status);
+            if (searchTerm) queryParams.append('search', searchTerm);
+            
+            // Add date range if applicable
+            const dateRange = getDateRangeFilter(dateFilter);
+            if (dateRange.startDate) queryParams.append('startDate', dateRange.startDate);
+            if (dateRange.endDate) queryParams.append('endDate', dateRange.endDate);
+            
+            // Add sorting
+            switch (sortBy) {
+                case 'newest':
+                    queryParams.append('sort', 'created_at');
+                    queryParams.append('order', 'desc');
+                    break;
+                case 'oldest':
+                    queryParams.append('sort', 'created_at');
+                    queryParams.append('order', 'asc');
+                    break;
+                case 'highest':
+                    queryParams.append('sort', 'total_amount');
+                    queryParams.append('order', 'desc');
+                    break;
+                case 'lowest':
+                    queryParams.append('sort', 'total_amount');
+                    queryParams.append('order', 'asc');
+                    break;
+            }
+            
+            const response = await callApi(`/api/orders?${queryParams.toString()}`);
+            const orders = response.data;
+            
+            if (orders.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="8" class="text-center py-4">No orders found.</td></tr>';
+                return;
+            }
+            
+            // Clear table and populate with orders
+            tableBody.innerHTML = '';
+            
+            orders.forEach(order => {
+                const row = document.createElement('tr');
+                row.setAttribute('data-order-id', order.id);
+                
+                // Truncate the items list if it's too long
+                let itemsText = order.items.map(item => `${item.quantity}x ${item.title}`).join(', ');
+                if (itemsText.length > 30) {
+                    itemsText = itemsText.substring(0, 30) + '...';
+                }
+                
+                row.innerHTML = `
+                    <td><strong>#${order.id}</strong></td>
+                    <td>${formatDateTime(order.created_at)}</td>
+                    <td>${order.customer_name || 'Guest'}</td>
+                    <td title="${order.items.map(item => `${item.quantity}x ${item.title}`).join(', ')}">
+                        ${itemsText}
+                    </td>
+                    <td>${formatCurrency(order.total_amount)}</td>
+                    <td class="order-status">${getStatusBadgeHTML(order.status)}</td>
+                    <td>${getPaymentBadgeHTML(order.is_paid)}</td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-primary view-btn" data-id="${order.id}">
+                            <i class="bi bi-eye"></i> View
+                        </button>
+                    </td>
+                `;
+                
+                tableBody.appendChild(row);
+            });
+            
+            // Attach event listeners to view buttons
+            document.querySelectorAll('.view-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const orderId = this.getAttribute('data-id');
+                    viewOrderDetails(orderId);
+                });
+            });
+            
+        } catch (error) {
+            console.error('Error loading orders:', error);
+            document.querySelector('#ordersTable tbody').innerHTML = 
+                `<tr><td colspan="8" class="text-center py-4 text-danger">Error loading orders: ${error.message}</td></tr>`;
+        }
+    }
+    
+    // View order details
+    async function viewOrderDetails(orderId) {
+        try {
+            const response = await callApi(`/api/orders/${orderId}`);
+            const order = response.data;
+            
+            // Populate the modal with order details
+            document.getElementById('modal-order-id').textContent = order.id;
+            document.getElementById('modal-order-date').textContent = formatDateTime(order.created_at);
+            document.getElementById('modal-order-status').innerHTML = getStatusBadgeHTML(order.status);
+            document.getElementById('modal-payment-status').innerHTML = getPaymentBadgeHTML(order.is_paid);
+            
+            document.getElementById('modal-customer-name').textContent = order.customer_name || 'Guest';
+            document.getElementById('modal-customer-email').textContent = order.customer_email || 'N/A';
+            document.getElementById('modal-customer-phone').textContent = order.customer_phone || 'N/A';
+            document.getElementById('modal-customer-address').textContent = order.delivery_address || 'N/A';
+            
+            // Populate order items
+            const itemsContainer = document.getElementById('modal-order-items');
+            itemsContainer.innerHTML = '';
+            
+            let subtotal = 0;
+            
+            order.items.forEach(item => {
+                const itemSubtotal = item.price * item.quantity;
+                subtotal += itemSubtotal;
+                
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>
+                        <div class="d-flex align-items-center">
+                            <div class="me-2">
+                                <img src="${item.image_url || 'https://via.placeholder.com/40'}" 
+                                     alt="${item.title}" width="40" height="40" class="rounded">
+                            </div>
+                            <div>
+                                ${item.title}
+                                ${item.special_instructions ? `<small class="d-block text-muted">${item.special_instructions}</small>` : ''}
+                            </div>
+                        </div>
+                    </td>
+                    <td>${item.quantity}</td>
+                    <td>${formatCurrency(item.price)}</td>
+                    <td>${formatCurrency(itemSubtotal)}</td>
+                `;
+                
+                itemsContainer.appendChild(row);
+            });
+            
+            // Calculate and display totals
+            const taxRate = 0.08; // 8% tax
+            const tax = subtotal * taxRate;
+            const total = subtotal + tax;
+            
+            document.getElementById('modal-subtotal').textContent = formatCurrency(subtotal);
+            document.getElementById('modal-tax').textContent = formatCurrency(tax);
+            document.getElementById('modal-total').textContent = formatCurrency(total);
+            
+            // Set special instructions
+            document.getElementById('modal-special-instructions').textContent = 
+                order.special_instructions || 'None';
+            
+            // Set current status in the dropdown
+            document.getElementById('modal-status-update').value = order.status;
+            
+            // Update action buttons state
+            const markAsPaidBtn = document.getElementById('markAsPaidBtn');
+            markAsPaidBtn.disabled = order.is_paid;
+            markAsPaidBtn.dataset.orderId = order.id;
+            
+            const updateStatusBtn = document.getElementById('updateStatusBtn');
+            updateStatusBtn.dataset.orderId = order.id;
+            
+            // Show the modal
+            const modal = new bootstrap.Modal(document.getElementById('orderDetailsModal'));
+            modal.show();
+            
+        } catch (error) {
+            console.error('Error loading order details:', error);
+            alert(`Error loading order details: ${error.message}`);
+        }
+    }
+    
+    // Update order status
+    async function updateOrderStatus(orderId, status) {
+        try {
+            await callApi(`/api/orders/${orderId}/status`, 'PUT', { status });
+            
+            // Update the status in the modal
+            document.getElementById('modal-order-status').innerHTML = getStatusBadgeHTML(status);
+            
+            // Update the status in the table
+            const row = document.querySelector(`tr[data-order-id="${orderId}"]`);
+            if (row) {
+                const statusCell = row.querySelector('.order-status');
+                if (statusCell) {
+                    statusCell.innerHTML = getStatusBadgeHTML(status);
+                }
+            }
+            
+            // Show success message
+            alert('Order status updated successfully!');
+            
+        } catch (error) {
+            console.error('Error updating order status:', error);
+            alert(`Error updating order status: ${error.message}`);
+        }
+    }
+    
+    // Mark order as paid
+    async function markOrderAsPaid(orderId) {
+        try {
+            await callApi(`/api/orders/${orderId}/payment`, 'PUT', { is_paid: true });
+            
+            // Update the payment status in the modal
+            document.getElementById('modal-payment-status').innerHTML = getPaymentBadgeHTML(true);
+            
+            // Update the payment status in the table and disable the button
+            const row = document.querySelector(`tr[data-order-id="${orderId}"]`);
+            if (row) {
+                const paymentCell = row.querySelector('td:nth-child(7)');
+                if (paymentCell) {
+                    paymentCell.innerHTML = getPaymentBadgeHTML(true);
+                }
+            }
+            
+            const markAsPaidBtn = document.getElementById('markAsPaidBtn');
+            markAsPaidBtn.disabled = true;
+            
+            // Show success message
+            alert('Order marked as paid successfully!');
+            
+        } catch (error) {
+            console.error('Error marking order as paid:', error);
+            alert(`Error marking order as paid: ${error.message}`);
+        }
+    }
+    
+    // Print order
+    function printOrder() {
+        const printWindow = window.open('', '_blank');
+        
+        // Get order details from the modal
+        const orderId = document.getElementById('modal-order-id').textContent;
+        const orderDate = document.getElementById('modal-order-date').textContent;
+        const customerName = document.getElementById('modal-customer-name').textContent;
+        const customerPhone = document.getElementById('modal-customer-phone').textContent;
+        const customerAddress = document.getElementById('modal-customer-address').textContent;
+        const subtotal = document.getElementById('modal-subtotal').textContent;
+        const tax = document.getElementById('modal-tax').textContent;
+        const total = document.getElementById('modal-total').textContent;
+        
+        // Get items table content
+        const itemsTable = document.getElementById('modal-order-items').innerHTML;
+        
+        // Create print content
+        const printContent = `
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <title>Order #${orderId} - Baklovah</title>
+                <style>
+                    body { font-family: Arial, sans-serif; margin: 20px; }
+                    h1 { text-align: center; }
+                    .order-info { margin-bottom: 20px; }
+                    table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+                    th, td { padding: 8px; text-align: left; border-bottom: 1px solid #ddd; }
+                    th { background-color: #f2f2f2; }
+                    .totals { text-align: right; }
+                    .receipt-footer { text-align: center; margin-top: 30px; }
+                </style>
+            </head>
+            <body>
+                <h1>Baklovah Restaurant</h1>
+                <p style="text-align: center;">123 Main Street, Anytown, CA 94568<br>Phone: (555) 123-4567</p>
+                
+                <div class="order-info">
+                    <h2>Order #${orderId}</h2>
+                    <p><strong>Date & Time:</strong> ${orderDate}</p>
+                    <p><strong>Customer:</strong> ${customerName}</p>
+                    <p><strong>Phone:</strong> ${customerPhone}</p>
+                    <p><strong>Address:</strong> ${customerAddress}</p>
+                </div>
+                
+                <h3>Order Items:</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Item</th>
+                            <th>Quantity</th>
+                            <th>Price</th>
+                            <th>Subtotal</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${itemsTable}
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="3" style="text-align: right;"><strong>Subtotal:</strong></td>
+                            <td>${subtotal}</td>
+                        </tr>
+                        <tr>
+                            <td colspan="3" style="text-align: right;"><strong>Tax:</strong></td>
+                            <td>${tax}</td>
+                        </tr>
+                        <tr>
+                            <td colspan="3" style="text-align: right;"><strong>Total:</strong></td>
+                            <td>${total}</td>
+                        </tr>
+                    </tfoot>
+                </table>
+                
+                <div class="receipt-footer">
+                    <p>Thank you for your order!</p>
+                    <p>Visit us again at Baklovah Restaurant</p>
+                </div>
+            </body>
+            </html>
+        `;
+        
+        printWindow.document.open();
+        printWindow.document.write(printContent);
+        printWindow.document.close();
+        
+        // Print after content is loaded
+        printWindow.onload = function() {
+            printWindow.print();
+        };
+    }
+    
+    // Request notification permission
+    function requestNotificationPermission() {
+        if ('Notification' in window) {
+            if (Notification.permission !== 'granted' && Notification.permission !== 'denied') {
+                Notification.requestPermission();
+            }
+        }
+    }
+    
+    // Add event listeners once the DOM is loaded
+    document.addEventListener('DOMContentLoaded', function() {
+        // Request notification permission
+        requestNotificationPermission();
+        
+        // Load orders on page load
+        loadOrders();
+        
+        // Filters change event
+        document.getElementById('statusFilter').addEventListener('change', loadOrders);
+        document.getElementById('dateFilter').addEventListener('change', loadOrders);
+        document.getElementById('sortFilter').addEventListener('change', loadOrders);
+        
+        // Search input
+        let searchTimeout;
+        document.getElementById('searchFilter').addEventListener('input', function() {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(loadOrders, 500);
+        });
+        
+        // Refresh button
+        document.getElementById('refreshBtn').addEventListener('click', loadOrders);
+        
+        // Update status button
+        document.getElementById('updateStatusBtn').addEventListener('click', function() {
+            const orderId = this.dataset.orderId;
+            const status = document.getElementById('modal-status-update').value;
+            updateOrderStatus(orderId, status);
+        });
+        
+        // Mark as paid button
+        document.getElementById('markAsPaidBtn').addEventListener('click', function() {
+            const orderId = this.dataset.orderId;
+            markOrderAsPaid(orderId);
+        });
+        
+        // Print order button
+        document.getElementById('printOrderBtn').addEventListener('click', printOrder);
+    });
+</script>
+
+<%- include('./partials/footer') %>

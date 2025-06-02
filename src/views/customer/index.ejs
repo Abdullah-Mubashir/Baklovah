@@ -1,0 +1,192 @@
+<%- include('./partials/header', { title: 'Home', currentPath: '/', additionalStyles: [] }) %>
+
+<!-- Hero Section -->
+<section class="hero-section position-relative">
+    <div class="hero-image-container">
+        <img src="/images/customer/hero-bg.jpg" alt="Baklovah Restaurant" class="hero-image">
+        <div class="hero-overlay"></div>
+    </div>
+    <div class="container position-relative hero-content">
+        <div class="row">
+            <div class="col-lg-8 col-md-10">
+                <h1 class="display-4 fw-bold text-white mb-3">Experience Authentic Middle Eastern Cuisine</h1>
+                <p class="lead text-white mb-4">Indulge in our delicious selection of traditional dishes made with the freshest ingredients and authentic recipes.</p>
+                <div class="d-flex flex-wrap gap-2">
+                    <a href="/menu" class="btn btn-primary btn-lg">View Menu</a>
+                    <a href="/order" class="btn btn-outline-light btn-lg">Order Online</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Featured Menu Items -->
+<section class="py-5">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="section-title">Our Popular Dishes</h2>
+            <p class="section-subtitle">Discover our most loved dishes that keep our customers coming back for more</p>
+        </div>
+        <div class="row" id="featured-items">
+            <!-- Featured items will be loaded dynamically -->
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="card h-100 menu-item-card">
+                    <div class="menu-item-image">
+                        <img src="/images/customer/placeholder-food.jpg" class="card-img-top" alt="Baklava">
+                        <span class="badge bg-danger position-absolute top-0 end-0 m-2">Popular</span>
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">Baklava</h5>
+                        <p class="card-text">Delicious layers of phyllo dough, filled with chopped nuts and sweetened with honey.</p>
+                        <p class="menu-item-price">$8.99</p>
+                        <button class="btn btn-primary add-to-cart-btn" data-item-id="1" data-item-name="Baklava" data-item-price="8.99">
+                            <i class="fas fa-cart-plus"></i> Add to Cart
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="card h-100 menu-item-card">
+                    <div class="menu-item-image">
+                        <img src="/images/customer/placeholder-food.jpg" class="card-img-top" alt="Shawarma">
+                        <span class="badge bg-danger position-absolute top-0 end-0 m-2">Popular</span>
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">Chicken Shawarma</h5>
+                        <p class="card-text">Marinated chicken, slow-roasted on a vertical rotisserie, served with garlic sauce.</p>
+                        <p class="menu-item-price">$12.99</p>
+                        <button class="btn btn-primary add-to-cart-btn" data-item-id="2" data-item-name="Chicken Shawarma" data-item-price="12.99">
+                            <i class="fas fa-cart-plus"></i> Add to Cart
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="card h-100 menu-item-card">
+                    <div class="menu-item-image">
+                        <img src="/images/customer/placeholder-food.jpg" class="card-img-top" alt="Hummus">
+                        <span class="badge bg-danger position-absolute top-0 end-0 m-2">Popular</span>
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">Hummus Plate</h5>
+                        <p class="card-text">Creamy chickpea dip with tahini, olive oil, and warm pita bread.</p>
+                        <p class="menu-item-price">$7.99</p>
+                        <button class="btn btn-primary add-to-cart-btn" data-item-id="3" data-item-name="Hummus Plate" data-item-price="7.99">
+                            <i class="fas fa-cart-plus"></i> Add to Cart
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="text-center mt-4">
+            <a href="/menu" class="btn btn-outline-primary">View Full Menu</a>
+        </div>
+    </div>
+</section>
+
+<!-- About Section -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6 mb-4 mb-lg-0">
+                <img src="/images/customer/restaurant-interior.jpg" alt="Baklovah Restaurant Interior" class="img-fluid rounded">
+            </div>
+            <div class="col-lg-6">
+                <h2 class="section-title">Our Story</h2>
+                <p>Welcome to Baklovah, where we bring the rich flavors of Middle Eastern cuisine to your table. Our journey began with a passion for authentic food and a desire to share our cultural heritage.</p>
+                <p>Every dish at Baklovah is prepared with love, using traditional recipes passed down through generations and the freshest ingredients available. Our chefs blend time-honored cooking techniques with modern presentation to create a dining experience that is both familiar and exciting.</p>
+                <p>Whether you're joining us for a family dinner, a quick lunch, or ordering online for a special occasion, we're committed to providing exceptional food and service that will keep you coming back.</p>
+                <a href="/about" class="btn btn-outline-primary mt-3">Learn More About Us</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Testimonials -->
+<section class="py-5">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="section-title">What Our Customers Say</h2>
+            <p class="section-subtitle">Read testimonials from our satisfied customers</p>
+        </div>
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 testimonial-card">
+                    <div class="card-body">
+                        <div class="testimonial-rating mb-3">
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                        </div>
+                        <p class="card-text">"The baklava at Baklovah is simply the best I've ever had! The layers are perfectly crisp and the honey sweetness is just right. This place has become my go-to for Middle Eastern desserts."</p>
+                        <div class="testimonial-author d-flex align-items-center mt-3">
+                            <img src="/images/customer/avatar-1.jpg" alt="Customer" class="rounded-circle me-3" width="50" height="50">
+                            <div>
+                                <h6 class="mb-0">Sarah Johnson</h6>
+                                <small class="text-muted">Regular Customer</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 testimonial-card">
+                    <div class="card-body">
+                        <div class="testimonial-rating mb-3">
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                        </div>
+                        <p class="card-text">"I ordered online for a family gathering and everyone was impressed! The food arrived hot, fresh, and exactly as described. The shawarma platter was a huge hit. Will definitely order again!"</p>
+                        <div class="testimonial-author d-flex align-items-center mt-3">
+                            <img src="/images/customer/avatar-2.jpg" alt="Customer" class="rounded-circle me-3" width="50" height="50">
+                            <div>
+                                <h6 class="mb-0">Michael Rodriguez</h6>
+                                <small class="text-muted">First-time Customer</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 testimonial-card">
+                    <div class="card-body">
+                        <div class="testimonial-rating mb-3">
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star-half-alt text-warning"></i>
+                        </div>
+                        <p class="card-text">"The atmosphere at Baklovah is as wonderful as the food. Warm, inviting, and authentic. The staff is knowledgeable and friendly. Their hummus is creamy perfection and the lamb kebabs are out of this world!"</p>
+                        <div class="testimonial-author d-flex align-items-center mt-3">
+                            <img src="/images/customer/avatar-3.jpg" alt="Customer" class="rounded-circle me-3" width="50" height="50">
+                            <div>
+                                <h6 class="mb-0">Emily Chen</h6>
+                                <small class="text-muted">Food Blogger</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Call to Action -->
+<section class="py-5 bg-primary text-white">
+    <div class="container text-center">
+        <h2 class="mb-3">Ready to Experience Baklovah?</h2>
+        <p class="lead mb-4">Order online for pickup or delivery, or make a reservation for dine-in.</p>
+        <div class="d-flex justify-content-center flex-wrap gap-3">
+            <a href="/order" class="btn btn-light btn-lg">Order Now</a>
+            <a href="/contact" class="btn btn-outline-light btn-lg">Make a Reservation</a>
+        </div>
+    </div>
+</section>
+
+<%- include('./partials/footer', { additionalScripts: ['/js/customer/home.js'] }) %>

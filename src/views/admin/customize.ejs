@@ -1,0 +1,433 @@
+<%- include('./partials/header', { title: 'Website Customization', currentPath: '/admin/customize', user: user, actionButtons: '' }) %>
+
+<div class="container-fluid px-0">
+    <!-- Customization Tabs -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <ul class="nav nav-tabs" id="customizeTab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="general-tab" data-bs-toggle="tab" data-bs-target="#general" type="button" role="tab" aria-controls="general" aria-selected="true">
+                        General Settings
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="homepage-tab" data-bs-toggle="tab" data-bs-target="#homepage" type="button" role="tab" aria-controls="homepage" aria-selected="false">
+                        Homepage
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="banners-tab" data-bs-toggle="tab" data-bs-target="#banners" type="button" role="tab" aria-controls="banners" aria-selected="false">
+                        Banners & Promotions
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="about-tab" data-bs-toggle="tab" data-bs-target="#about" type="button" role="tab" aria-controls="about" aria-selected="false">
+                        About & Contact
+                    </button>
+                </li>
+            </ul>
+        </div>
+    </div>
+    
+    <!-- Tab Content -->
+    <div class="tab-content" id="customizeTabContent">
+        <!-- General Settings Tab -->
+        <div class="tab-pane fade show active" id="general" role="tabpanel" aria-labelledby="general-tab">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5 class="mb-0">Restaurant Information</h5>
+                        </div>
+                        <div class="card-body">
+                            <form id="restaurantInfoForm">
+                                <div class="mb-3">
+                                    <label for="restaurantName" class="form-label">Restaurant Name</label>
+                                    <input type="text" class="form-control" id="restaurantName" placeholder="Baklovah Baklava & Cafe">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="restaurantLogo" class="form-label">Restaurant Logo</label>
+                                    <input type="file" class="form-control" id="restaurantLogo">
+                                    <div class="mt-2" id="currentLogoPreview">
+                                        <img src="#" alt="Current Logo" class="img-thumbnail" style="max-height: 100px; display: none;">
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="restaurantTagline" class="form-label">Tagline</label>
+                                    <input type="text" class="form-control" id="restaurantTagline" placeholder="Authentic Middle Eastern Sweets & Cuisine">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="restaurantDescription" class="form-label">Short Description</label>
+                                    <textarea class="form-control" id="restaurantDescription" rows="3" placeholder="A brief description of your restaurant"></textarea>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Save Information</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5 class="mb-0">Theme Settings</h5>
+                        </div>
+                        <div class="card-body">
+                            <form id="themeSettingsForm">
+                                <div class="mb-3">
+                                    <label for="primaryColor" class="form-label">Primary Color</label>
+                                    <div class="input-group">
+                                        <input type="color" class="form-control form-control-color" id="primaryColor" value="#007bff">
+                                        <input type="text" class="form-control" id="primaryColorText" value="#007bff">
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="secondaryColor" class="form-label">Secondary Color</label>
+                                    <div class="input-group">
+                                        <input type="color" class="form-control form-control-color" id="secondaryColor" value="#6c757d">
+                                        <input type="text" class="form-control" id="secondaryColorText" value="#6c757d">
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="accentColor" class="form-label">Accent Color</label>
+                                    <div class="input-group">
+                                        <input type="color" class="form-control form-control-color" id="accentColor" value="#ffc107">
+                                        <input type="text" class="form-control" id="accentColorText" value="#ffc107">
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="fontFamily" class="form-label">Font Family</label>
+                                    <select class="form-select" id="fontFamily">
+                                        <option value="'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif">SF Pro (Apple)</option>
+                                        <option value="'Roboto', sans-serif">Roboto</option>
+                                        <option value="'Open Sans', sans-serif">Open Sans</option>
+                                        <option value="'Montserrat', sans-serif">Montserrat</option>
+                                        <option value="'Poppins', sans-serif">Poppins</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Theme Preview</label>
+                                    <div class="theme-preview p-3 border rounded">
+                                        <h3 class="preview-heading">Baklovah Baklava & Cafe</h3>
+                                        <p class="preview-text">This is how your text will appear on the website.</p>
+                                        <button class="btn preview-primary-btn">Primary Button</button>
+                                        <button class="btn preview-secondary-btn">Secondary Button</button>
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Save Theme</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Homepage Tab -->
+        <div class="tab-pane fade" id="homepage" role="tabpanel" aria-labelledby="homepage-tab">
+            <div class="row">
+                <div class="col-md-12 mb-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">Hero Section</h5>
+                        </div>
+                        <div class="card-body">
+                            <form id="heroSectionForm">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="heroTitle" class="form-label">Hero Title</label>
+                                            <input type="text" class="form-control" id="heroTitle" placeholder="Welcome to Baklovah">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="heroSubtitle" class="form-label">Hero Subtitle</label>
+                                            <input type="text" class="form-control" id="heroSubtitle" placeholder="Authentic Middle Eastern Cuisine">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="heroButtonText" class="form-label">Button Text</label>
+                                            <input type="text" class="form-control" id="heroButtonText" placeholder="Order Now">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="heroButtonLink" class="form-label">Button Link</label>
+                                            <input type="text" class="form-control" id="heroButtonLink" placeholder="/menu">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="heroImage" class="form-label">Hero Background Image</label>
+                                            <input type="file" class="form-control" id="heroImage">
+                                            <div class="mt-2" id="currentHeroPreview">
+                                                <img src="#" alt="Current Hero Image" class="img-thumbnail" style="max-height: 200px; display: none;">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Save Hero Section</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-12 mb-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">Featured Categories</h5>
+                        </div>
+                        <div class="card-body">
+                            <form id="featuredCategoriesForm">
+                                <div class="mb-3">
+                                    <label class="form-label">Select Categories to Feature (up to 4)</label>
+                                    <div id="categoriesCheckboxes" class="row">
+                                        <!-- Categories will be loaded dynamically -->
+                                        <div class="col-md-3 mb-2">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" value="baklava" id="cat1">
+                                                <label class="form-check-label" for="cat1">Baklava</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3 mb-2">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" value="kunafa" id="cat2">
+                                                <label class="form-check-label" for="cat2">Kunafa</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3 mb-2">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" value="coffee" id="cat3">
+                                                <label class="form-check-label" for="cat3">Coffee</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3 mb-2">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" value="desserts" id="cat4">
+                                                <label class="form-check-label" for="cat4">Desserts</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Save Featured Categories</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Banners & Promotions Tab -->
+        <div class="tab-pane fade" id="banners" role="tabpanel" aria-labelledby="banners-tab">
+            <div class="row">
+                <div class="col-md-12 mb-4">
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">Promotional Banners</h5>
+                            <button class="btn btn-sm btn-primary" id="addBannerBtn">Add New Banner</button>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover align-middle" id="bannersTable">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col" width="60">Image</th>
+                                            <th scope="col">Title</th>
+                                            <th scope="col">Description</th>
+                                            <th scope="col">Button Text</th>
+                                            <th scope="col">Link</th>
+                                            <th scope="col">Active</th>
+                                            <th scope="col">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><img src="https://via.placeholder.com/50" class="img-thumbnail" alt="Banner"></td>
+                                            <td>Summer Special</td>
+                                            <td>Get 20% off on all desserts</td>
+                                            <td>Shop Now</td>
+                                            <td>/menu?category=desserts</td>
+                                            <td><span class="badge bg-success">Active</span></td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-primary me-1 edit-banner-btn"><i class="bi bi-pencil"></i></button>
+                                                <button class="btn btn-sm btn-outline-danger delete-banner-btn"><i class="bi bi-trash"></i></button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-12 mb-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">Special Announcement</h5>
+                        </div>
+                        <div class="card-body">
+                            <form id="announcementForm">
+                                <div class="mb-3">
+                                    <label for="announcementText" class="form-label">Announcement Text</label>
+                                    <input type="text" class="form-control" id="announcementText" placeholder="Free delivery on orders over $30!">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="announcementBgColor" class="form-label">Background Color</label>
+                                    <div class="input-group">
+                                        <input type="color" class="form-control form-control-color" id="announcementBgColor" value="#ffc107">
+                                        <input type="text" class="form-control" id="announcementBgColorText" value="#ffc107">
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="announcementTextColor" class="form-label">Text Color</label>
+                                    <div class="input-group">
+                                        <input type="color" class="form-control form-control-color" id="announcementTextColor" value="#000000">
+                                        <input type="text" class="form-control" id="announcementTextColorText" value="#000000">
+                                    </div>
+                                </div>
+                                <div class="mb-3 form-check">
+                                    <input type="checkbox" class="form-check-input" id="showAnnouncement" checked>
+                                    <label class="form-check-label" for="showAnnouncement">Show Announcement</label>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Save Announcement</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- About & Contact Tab -->
+        <div class="tab-pane fade" id="about" role="tabpanel" aria-labelledby="about-tab">
+            <div class="row">
+                <div class="col-md-6 mb-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">About Us</h5>
+                        </div>
+                        <div class="card-body">
+                            <form id="aboutUsForm">
+                                <div class="mb-3">
+                                    <label for="aboutTitle" class="form-label">About Us Title</label>
+                                    <input type="text" class="form-control" id="aboutTitle" placeholder="Our Story">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="aboutContent" class="form-label">About Us Content</label>
+                                    <textarea class="form-control" id="aboutContent" rows="6" placeholder="Tell your restaurant's story here..."></textarea>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="aboutImage" class="form-label">About Us Image</label>
+                                    <input type="file" class="form-control" id="aboutImage">
+                                    <div class="mt-2" id="currentAboutPreview">
+                                        <img src="#" alt="Current About Image" class="img-thumbnail" style="max-height: 150px; display: none;">
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Save About Us</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-6 mb-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">Contact Information</h5>
+                        </div>
+                        <div class="card-body">
+                            <form id="contactInfoForm">
+                                <div class="mb-3">
+                                    <label for="phoneNumber" class="form-label">Phone Number</label>
+                                    <input type="tel" class="form-control" id="phoneNumber" placeholder="(123) 456-7890">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="emailAddress" class="form-label">Email Address</label>
+                                    <input type="email" class="form-control" id="emailAddress" placeholder="info@baklovah.com">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="address" class="form-label">Address</label>
+                                    <textarea class="form-control" id="address" rows="3" placeholder="123 Main St, City, State, ZIP"></textarea>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="latitude" class="form-label">Latitude (for map)</label>
+                                        <input type="text" class="form-control" id="latitude" placeholder="37.7749">
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="longitude" class="form-label">Longitude (for map)</label>
+                                        <input type="text" class="form-control" id="longitude" placeholder="-122.4194">
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Save Contact Info</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-12 mb-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">Business Hours</h5>
+                        </div>
+                        <div class="card-body">
+                            <form id="businessHoursForm">
+                                <div class="table-responsive">
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+                                                <th>Day</th>
+                                                <th>Open</th>
+                                                <th>Close</th>
+                                                <th>Closed</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>Monday</td>
+                                                <td><input type="time" class="form-control" name="monday_open" value="09:00"></td>
+                                                <td><input type="time" class="form-control" name="monday_close" value="21:00"></td>
+                                                <td><input type="checkbox" class="form-check-input" name="monday_closed"></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Tuesday</td>
+                                                <td><input type="time" class="form-control" name="tuesday_open" value="09:00"></td>
+                                                <td><input type="time" class="form-control" name="tuesday_close" value="21:00"></td>
+                                                <td><input type="checkbox" class="form-check-input" name="tuesday_closed"></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Wednesday</td>
+                                                <td><input type="time" class="form-control" name="wednesday_open" value="09:00"></td>
+                                                <td><input type="time" class="form-control" name="wednesday_close" value="21:00"></td>
+                                                <td><input type="checkbox" class="form-check-input" name="wednesday_closed"></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Thursday</td>
+                                                <td><input type="time" class="form-control" name="thursday_open" value="09:00"></td>
+                                                <td><input type="time" class="form-control" name="thursday_close" value="21:00"></td>
+                                                <td><input type="checkbox" class="form-check-input" name="thursday_closed"></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Friday</td>
+                                                <td><input type="time" class="form-control" name="friday_open" value="09:00"></td>
+                                                <td><input type="time" class="form-control" name="friday_close" value="22:00"></td>
+                                                <td><input type="checkbox" class="form-check-input" name="friday_closed"></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Saturday</td>
+                                                <td><input type="time" class="form-control" name="saturday_open" value="10:00"></td>
+                                                <td><input type="time" class="form-control" name="saturday_close" value="22:00"></td>
+                                                <td><input type="checkbox" class="form-check-input" name="saturday_closed"></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Sunday</td>
+                                                <td><input type="time" class="form-control" name="sunday_open" value="10:00"></td>
+                                                <td><input type="time" class="form-control" name="sunday_close" value="20:00"></td>
+                                                <td><input type="checkbox" class="form-check-input" name="sunday_closed"></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Save Business Hours</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<%- include('./partials/customize-scripts') %>
+<%- include('./partials/footer') %>

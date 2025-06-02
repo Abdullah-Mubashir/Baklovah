@@ -1,0 +1,382 @@
+<%- include('./partials/header', { title: 'Settings', currentPath: '/admin/settings', user: user, actionButtons: '' }) %>
+
+<div class="container-fluid px-0">
+    <!-- Settings Tabs -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <ul class="nav nav-tabs" id="settingsTab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="general-tab" data-bs-toggle="tab" data-bs-target="#general" type="button" role="tab" aria-controls="general" aria-selected="true">
+                        General
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="users-tab" data-bs-toggle="tab" data-bs-target="#users" type="button" role="tab" aria-controls="users" aria-selected="false">
+                        Users
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="payment-tab" data-bs-toggle="tab" data-bs-target="#payment" type="button" role="tab" aria-controls="payment" aria-selected="false">
+                        Payment
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="notifications-tab" data-bs-toggle="tab" data-bs-target="#notifications" type="button" role="tab" aria-controls="notifications" aria-selected="false">
+                        Notifications
+                    </button>
+                </li>
+            </ul>
+        </div>
+    </div>
+    
+    <!-- Tab Content -->
+    <div class="tab-content" id="settingsTabContent">
+        <!-- General Settings Tab -->
+        <div class="tab-pane fade show active" id="general" role="tabpanel" aria-labelledby="general-tab">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5 class="mb-0">System Settings</h5>
+                        </div>
+                        <div class="card-body">
+                            <form id="systemSettingsForm">
+                                <div class="mb-3">
+                                    <label for="siteName" class="form-label">Site Name</label>
+                                    <input type="text" class="form-control" id="siteName" placeholder="Baklovah Admin">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="timeZone" class="form-label">Time Zone</label>
+                                    <select class="form-select" id="timeZone">
+                                        <option value="America/New_York">Eastern Time (ET)</option>
+                                        <option value="America/Chicago">Central Time (CT)</option>
+                                        <option value="America/Denver">Mountain Time (MT)</option>
+                                        <option value="America/Los_Angeles">Pacific Time (PT)</option>
+                                        <option value="America/Anchorage">Alaska Time (AKT)</option>
+                                        <option value="Pacific/Honolulu">Hawaii Time (HT)</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="dateFormat" class="form-label">Date Format</label>
+                                    <select class="form-select" id="dateFormat">
+                                        <option value="MM/DD/YYYY">MM/DD/YYYY</option>
+                                        <option value="DD/MM/YYYY">DD/MM/YYYY</option>
+                                        <option value="YYYY-MM-DD">YYYY-MM-DD</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="currencySymbol" class="form-label">Currency Symbol</label>
+                                    <input type="text" class="form-control" id="currencySymbol" placeholder="$">
+                                </div>
+                                <div class="mb-3 form-check">
+                                    <input type="checkbox" class="form-check-input" id="enableMaintenanceMode">
+                                    <label class="form-check-label" for="enableMaintenanceMode">Enable Maintenance Mode</label>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Save Settings</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5 class="mb-0">Order Settings</h5>
+                        </div>
+                        <div class="card-body">
+                            <form id="orderSettingsForm">
+                                <div class="mb-3">
+                                    <label for="taxRate" class="form-label">Tax Rate (%)</label>
+                                    <input type="number" step="0.01" class="form-control" id="taxRate" placeholder="8.25">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="minimumOrderAmount" class="form-label">Minimum Order Amount</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">$</span>
+                                        <input type="number" step="0.01" class="form-control" id="minimumOrderAmount" placeholder="10.00">
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="deliveryFee" class="form-label">Delivery Fee</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">$</span>
+                                        <input type="number" step="0.01" class="form-control" id="deliveryFee" placeholder="5.00">
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="freeDeliveryThreshold" class="form-label">Free Delivery Threshold</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">$</span>
+                                        <input type="number" step="0.01" class="form-control" id="freeDeliveryThreshold" placeholder="30.00">
+                                    </div>
+                                </div>
+                                <div class="mb-3 form-check">
+                                    <input type="checkbox" class="form-check-input" id="enableOnlineOrdering" checked>
+                                    <label class="form-check-label" for="enableOnlineOrdering">Enable Online Ordering</label>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Save Order Settings</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Users Tab -->
+        <div class="tab-pane fade" id="users" role="tabpanel" aria-labelledby="users-tab">
+            <div class="row">
+                <div class="col-md-12 mb-4">
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">User Management</h5>
+                            <button class="btn btn-sm btn-primary" id="addUserBtn" data-bs-toggle="modal" data-bs-target="#addUserModal">
+                                Add New User
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover align-middle" id="usersTable">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">#</th>
+                                            <th scope="col">Name</th>
+                                            <th scope="col">Email</th>
+                                            <th scope="col">Role</th>
+                                            <th scope="col">Last Login</th>
+                                            <th scope="col">Status</th>
+                                            <th scope="col">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>1</td>
+                                            <td>Admin User</td>
+                                            <td>admin@baklovah.com</td>
+                                            <td><span class="badge bg-primary">Admin</span></td>
+                                            <td>2025-06-02 11:30 AM</td>
+                                            <td><span class="badge bg-success">Active</span></td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-primary me-1 edit-user-btn" data-user-id="1"><i class="bi bi-pencil"></i></button>
+                                                <button class="btn btn-sm btn-outline-danger delete-user-btn" data-user-id="1"><i class="bi bi-trash"></i></button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>2</td>
+                                            <td>Cashier User</td>
+                                            <td>cashier@baklovah.com</td>
+                                            <td><span class="badge bg-info">Cashier</span></td>
+                                            <td>2025-06-01 09:15 AM</td>
+                                            <td><span class="badge bg-success">Active</span></td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-primary me-1 edit-user-btn" data-user-id="2"><i class="bi bi-pencil"></i></button>
+                                                <button class="btn btn-sm btn-outline-danger delete-user-btn" data-user-id="2"><i class="bi bi-trash"></i></button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Add User Modal -->
+            <div class="modal fade" id="addUserModal" tabindex="-1" aria-labelledby="addUserModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="addUserModalLabel">Add New User</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="addUserForm">
+                                <div class="mb-3">
+                                    <label for="userName" class="form-label">Name</label>
+                                    <input type="text" class="form-control" id="userName" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="userEmail" class="form-label">Email</label>
+                                    <input type="email" class="form-control" id="userEmail" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="userPassword" class="form-label">Password</label>
+                                    <input type="password" class="form-control" id="userPassword" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="userRole" class="form-label">Role</label>
+                                    <select class="form-select" id="userRole" required>
+                                        <option value="admin">Admin</option>
+                                        <option value="cashier">Cashier</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3 form-check">
+                                    <input type="checkbox" class="form-check-input" id="userActive" checked>
+                                    <label class="form-check-label" for="userActive">Active</label>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="button" class="btn btn-primary" id="saveUserBtn">Save User</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Payment Tab -->
+        <div class="tab-pane fade" id="payment" role="tabpanel" aria-labelledby="payment-tab">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5 class="mb-0">Stripe Integration</h5>
+                        </div>
+                        <div class="card-body">
+                            <form id="stripeSettingsForm">
+                                <div class="mb-3">
+                                    <label for="stripePublishableKey" class="form-label">Publishable Key</label>
+                                    <input type="text" class="form-control" id="stripePublishableKey" placeholder="pk_test_...">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="stripeSecretKey" class="form-label">Secret Key</label>
+                                    <input type="password" class="form-control" id="stripeSecretKey" placeholder="sk_test_...">
+                                </div>
+                                <div class="mb-3 form-check">
+                                    <input type="checkbox" class="form-check-input" id="stripeTestMode" checked>
+                                    <label class="form-check-label" for="stripeTestMode">Test Mode</label>
+                                </div>
+                                <div class="mb-3 form-check">
+                                    <input type="checkbox" class="form-check-input" id="enableStripe" checked>
+                                    <label class="form-check-label" for="enableStripe">Enable Stripe Payments</label>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Save Stripe Settings</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5 class="mb-0">Payment Methods</h5>
+                        </div>
+                        <div class="card-body">
+                            <form id="paymentMethodsForm">
+                                <div class="mb-3 form-check">
+                                    <input type="checkbox" class="form-check-input" id="enableCreditCards" checked>
+                                    <label class="form-check-label" for="enableCreditCards">Credit Cards</label>
+                                </div>
+                                <div class="mb-3 form-check">
+                                    <input type="checkbox" class="form-check-input" id="enableCashOnDelivery" checked>
+                                    <label class="form-check-label" for="enableCashOnDelivery">Cash on Delivery</label>
+                                </div>
+                                <div class="mb-3 form-check">
+                                    <input type="checkbox" class="form-check-input" id="enableApplePay">
+                                    <label class="form-check-label" for="enableApplePay">Apple Pay</label>
+                                </div>
+                                <div class="mb-3 form-check">
+                                    <input type="checkbox" class="form-check-input" id="enableGooglePay">
+                                    <label class="form-check-label" for="enableGooglePay">Google Pay</label>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Save Payment Methods</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Notifications Tab -->
+        <div class="tab-pane fade" id="notifications" role="tabpanel" aria-labelledby="notifications-tab">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5 class="mb-0">Email Notifications</h5>
+                        </div>
+                        <div class="card-body">
+                            <form id="emailSettingsForm">
+                                <div class="mb-3">
+                                    <label for="smtpHost" class="form-label">SMTP Host</label>
+                                    <input type="text" class="form-control" id="smtpHost" placeholder="smtp.gmail.com">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="smtpPort" class="form-label">SMTP Port</label>
+                                    <input type="number" class="form-control" id="smtpPort" placeholder="587">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="smtpUsername" class="form-label">SMTP Username</label>
+                                    <input type="text" class="form-control" id="smtpUsername" placeholder="your-email@gmail.com">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="smtpPassword" class="form-label">SMTP Password</label>
+                                    <input type="password" class="form-control" id="smtpPassword">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="fromEmail" class="form-label">From Email</label>
+                                    <input type="email" class="form-control" id="fromEmail" placeholder="noreply@baklovah.com">
+                                </div>
+                                <div class="mb-3 form-check">
+                                    <input type="checkbox" class="form-check-input" id="enableEmailNotifications" checked>
+                                    <label class="form-check-label" for="enableEmailNotifications">Enable Email Notifications</label>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Save Email Settings</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5 class="mb-0">Notification Settings</h5>
+                        </div>
+                        <div class="card-body">
+                            <form id="notificationSettingsForm">
+                                <h6 class="mb-3">Admin Notifications</h6>
+                                <div class="mb-3 form-check">
+                                    <input type="checkbox" class="form-check-input" id="notifyNewOrders" checked>
+                                    <label class="form-check-label" for="notifyNewOrders">New Orders</label>
+                                </div>
+                                <div class="mb-3 form-check">
+                                    <input type="checkbox" class="form-check-input" id="notifyLowStock" checked>
+                                    <label class="form-check-label" for="notifyLowStock">Low Stock Alerts</label>
+                                </div>
+                                <div class="mb-3 form-check">
+                                    <input type="checkbox" class="form-check-input" id="notifyNewReviews" checked>
+                                    <label class="form-check-label" for="notifyNewReviews">New Reviews</label>
+                                </div>
+                                
+                                <h6 class="mb-3 mt-4">Customer Notifications</h6>
+                                <div class="mb-3 form-check">
+                                    <input type="checkbox" class="form-check-input" id="sendOrderConfirmation" checked>
+                                    <label class="form-check-label" for="sendOrderConfirmation">Order Confirmation</label>
+                                </div>
+                                <div class="mb-3 form-check">
+                                    <input type="checkbox" class="form-check-input" id="sendOrderStatusUpdates" checked>
+                                    <label class="form-check-label" for="sendOrderStatusUpdates">Order Status Updates</label>
+                                </div>
+                                <div class="mb-3 form-check">
+                                    <input type="checkbox" class="form-check-input" id="sendPromotionalEmails">
+                                    <label class="form-check-label" for="sendPromotionalEmails">Promotional Emails</label>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Save Notification Settings</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Toast container for notifications -->
+<div class="toast-container position-fixed bottom-0 end-0 p-3"></div>
+
+<!-- Mock Data for Testing -->
+<script src="/js/admin/mock-data.js"></script>
+
+<!-- JavaScript for Settings Page -->
+<script src="/js/admin/settings.js"></script>
+
+<%- include('./partials/footer') %>

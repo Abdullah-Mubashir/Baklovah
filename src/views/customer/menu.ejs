@@ -1,0 +1,341 @@
+<%- include('./partials/header', { title: 'Menu', currentPath: '/menu', additionalStyles: ['/css/customer/menu.css'] }) %>
+
+<!-- Menu Hero Section -->
+<section class="menu-hero-section position-relative">
+    <div class="menu-hero-image-container">
+        <img src="/images/customer/menu-hero.jpg" alt="Our Menu" class="menu-hero-image">
+        <div class="menu-hero-overlay"></div>
+    </div>
+    <div class="container position-relative menu-hero-content text-center">
+        <h1 class="display-4 fw-bold text-white mb-3">Our Menu</h1>
+        <p class="lead text-white mb-4">Explore our selection of authentic Middle Eastern dishes</p>
+    </div>
+</section>
+
+<!-- Menu Categories Navigation -->
+<section class="bg-light py-3 sticky-top menu-nav-section">
+    <div class="container">
+        <nav class="menu-nav">
+            <ul class="nav nav-pills menu-nav-pills justify-content-center flex-nowrap overflow-auto">
+                <li class="nav-item">
+                    <a class="nav-link active" href="#appetizers">Appetizers</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#main-dishes">Main Dishes</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#sandwiches">Sandwiches</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#sides">Sides</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#desserts">Desserts</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#beverages">Beverages</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</section>
+
+<!-- Menu Sections -->
+<section class="py-5">
+    <div class="container">
+        <!-- Appetizers -->
+        <div id="appetizers" class="menu-section mb-5">
+            <h2 class="section-title text-center mb-4">Appetizers</h2>
+            <div class="row" id="appetizers-items">
+                <!-- Items will be loaded dynamically, showing placeholder items for now -->
+                <div class="col-lg-6 mb-4">
+                    <div class="card menu-item-card h-100">
+                        <div class="row g-0">
+                            <div class="col-md-4">
+                                <img src="/images/customer/placeholder-food.jpg" class="img-fluid rounded-start h-100 object-fit-cover" alt="Hummus">
+                            </div>
+                            <div class="col-md-8">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <h5 class="card-title">Hummus</h5>
+                                        <span class="menu-item-price">$7.99</span>
+                                    </div>
+                                    <p class="card-text">Creamy chickpea dip with tahini, olive oil, lemon juice, and garlic. Served with warm pita bread.</p>
+                                    <div class="menu-item-tags mb-2">
+                                        <span class="badge bg-success">Vegetarian</span>
+                                        <span class="badge bg-info">Gluten-Free Option</span>
+                                    </div>
+                                    <button class="btn btn-primary btn-sm add-to-cart-btn" data-item-id="101" data-item-name="Hummus" data-item-price="7.99">
+                                        <i class="fas fa-cart-plus"></i> Add to Cart
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 mb-4">
+                    <div class="card menu-item-card h-100">
+                        <div class="row g-0">
+                            <div class="col-md-4">
+                                <img src="/images/customer/placeholder-food.jpg" class="img-fluid rounded-start h-100 object-fit-cover" alt="Baba Ganoush">
+                            </div>
+                            <div class="col-md-8">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <h5 class="card-title">Baba Ganoush</h5>
+                                        <span class="menu-item-price">$8.99</span>
+                                    </div>
+                                    <p class="card-text">Smoky eggplant dip with tahini, garlic, and lemon juice. Served with warm pita bread.</p>
+                                    <div class="menu-item-tags mb-2">
+                                        <span class="badge bg-success">Vegetarian</span>
+                                        <span class="badge bg-info">Gluten-Free Option</span>
+                                    </div>
+                                    <button class="btn btn-primary btn-sm add-to-cart-btn" data-item-id="102" data-item-name="Baba Ganoush" data-item-price="8.99">
+                                        <i class="fas fa-cart-plus"></i> Add to Cart
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Dishes -->
+        <div id="main-dishes" class="menu-section mb-5">
+            <h2 class="section-title text-center mb-4">Main Dishes</h2>
+            <div class="row" id="main-dishes-items">
+                <!-- Items will be loaded dynamically, showing placeholder items for now -->
+                <div class="col-lg-6 mb-4">
+                    <div class="card menu-item-card h-100">
+                        <div class="row g-0">
+                            <div class="col-md-4">
+                                <img src="/images/customer/placeholder-food.jpg" class="img-fluid rounded-start h-100 object-fit-cover" alt="Chicken Shawarma Plate">
+                            </div>
+                            <div class="col-md-8">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <h5 class="card-title">Chicken Shawarma Plate</h5>
+                                        <span class="menu-item-price">$15.99</span>
+                                    </div>
+                                    <p class="card-text">Marinated chicken, slow-roasted on a vertical rotisserie. Served with rice, salad, and garlic sauce.</p>
+                                    <div class="menu-item-tags mb-2">
+                                        <span class="badge bg-danger">Popular</span>
+                                    </div>
+                                    <button class="btn btn-primary btn-sm add-to-cart-btn" data-item-id="201" data-item-name="Chicken Shawarma Plate" data-item-price="15.99">
+                                        <i class="fas fa-cart-plus"></i> Add to Cart
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 mb-4">
+                    <div class="card menu-item-card h-100">
+                        <div class="row g-0">
+                            <div class="col-md-4">
+                                <img src="/images/customer/placeholder-food.jpg" class="img-fluid rounded-start h-100 object-fit-cover" alt="Lamb Kebab Plate">
+                            </div>
+                            <div class="col-md-8">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <h5 class="card-title">Lamb Kebab Plate</h5>
+                                        <span class="menu-item-price">$18.99</span>
+                                    </div>
+                                    <p class="card-text">Grilled lamb kebabs seasoned with Middle Eastern spices. Served with rice, grilled vegetables, and tzatziki sauce.</p>
+                                    <div class="menu-item-tags mb-2">
+                                        <span class="badge bg-danger">Popular</span>
+                                        <span class="badge bg-info">Gluten-Free</span>
+                                    </div>
+                                    <button class="btn btn-primary btn-sm add-to-cart-btn" data-item-id="202" data-item-name="Lamb Kebab Plate" data-item-price="18.99">
+                                        <i class="fas fa-cart-plus"></i> Add to Cart
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sandwiches -->
+        <div id="sandwiches" class="menu-section mb-5">
+            <h2 class="section-title text-center mb-4">Sandwiches</h2>
+            <div class="row" id="sandwiches-items">
+                <!-- Items will be loaded dynamically, showing placeholder items for now -->
+                <div class="col-lg-6 mb-4">
+                    <div class="card menu-item-card h-100">
+                        <div class="row g-0">
+                            <div class="col-md-4">
+                                <img src="/images/customer/placeholder-food.jpg" class="img-fluid rounded-start h-100 object-fit-cover" alt="Falafel Wrap">
+                            </div>
+                            <div class="col-md-8">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <h5 class="card-title">Falafel Wrap</h5>
+                                        <span class="menu-item-price">$9.99</span>
+                                    </div>
+                                    <p class="card-text">Crispy falafel balls wrapped in warm pita with tahini sauce, lettuce, tomatoes, and pickles.</p>
+                                    <div class="menu-item-tags mb-2">
+                                        <span class="badge bg-success">Vegetarian</span>
+                                    </div>
+                                    <button class="btn btn-primary btn-sm add-to-cart-btn" data-item-id="301" data-item-name="Falafel Wrap" data-item-price="9.99">
+                                        <i class="fas fa-cart-plus"></i> Add to Cart
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 mb-4">
+                    <div class="card menu-item-card h-100">
+                        <div class="row g-0">
+                            <div class="col-md-4">
+                                <img src="/images/customer/placeholder-food.jpg" class="img-fluid rounded-start h-100 object-fit-cover" alt="Chicken Shawarma Wrap">
+                            </div>
+                            <div class="col-md-8">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <h5 class="card-title">Chicken Shawarma Wrap</h5>
+                                        <span class="menu-item-price">$10.99</span>
+                                    </div>
+                                    <p class="card-text">Marinated chicken wrapped in warm pita with garlic sauce, pickles, and french fries.</p>
+                                    <div class="menu-item-tags mb-2">
+                                        <span class="badge bg-danger">Popular</span>
+                                    </div>
+                                    <button class="btn btn-primary btn-sm add-to-cart-btn" data-item-id="302" data-item-name="Chicken Shawarma Wrap" data-item-price="10.99">
+                                        <i class="fas fa-cart-plus"></i> Add to Cart
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Desserts -->
+        <div id="desserts" class="menu-section mb-5">
+            <h2 class="section-title text-center mb-4">Desserts</h2>
+            <div class="row" id="desserts-items">
+                <!-- Items will be loaded dynamically, showing placeholder items for now -->
+                <div class="col-lg-6 mb-4">
+                    <div class="card menu-item-card h-100">
+                        <div class="row g-0">
+                            <div class="col-md-4">
+                                <img src="/images/customer/placeholder-food.jpg" class="img-fluid rounded-start h-100 object-fit-cover" alt="Baklava">
+                            </div>
+                            <div class="col-md-8">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <h5 class="card-title">Baklava</h5>
+                                        <span class="menu-item-price">$4.99</span>
+                                    </div>
+                                    <p class="card-text">Layers of phyllo dough filled with chopped nuts and sweetened with honey syrup.</p>
+                                    <div class="menu-item-tags mb-2">
+                                        <span class="badge bg-danger">Popular</span>
+                                        <span class="badge bg-success">Vegetarian</span>
+                                    </div>
+                                    <button class="btn btn-primary btn-sm add-to-cart-btn" data-item-id="401" data-item-name="Baklava" data-item-price="4.99">
+                                        <i class="fas fa-cart-plus"></i> Add to Cart
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 mb-4">
+                    <div class="card menu-item-card h-100">
+                        <div class="row g-0">
+                            <div class="col-md-4">
+                                <img src="/images/customer/placeholder-food.jpg" class="img-fluid rounded-start h-100 object-fit-cover" alt="Kunafa">
+                            </div>
+                            <div class="col-md-8">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <h5 class="card-title">Kunafa</h5>
+                                        <span class="menu-item-price">$6.99</span>
+                                    </div>
+                                    <p class="card-text">Sweet cheese pastry made with thin noodle-like pastry soaked in sweet syrup.</p>
+                                    <div class="menu-item-tags mb-2">
+                                        <span class="badge bg-success">Vegetarian</span>
+                                    </div>
+                                    <button class="btn btn-primary btn-sm add-to-cart-btn" data-item-id="402" data-item-name="Kunafa" data-item-price="6.99">
+                                        <i class="fas fa-cart-plus"></i> Add to Cart
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Beverages -->
+        <div id="beverages" class="menu-section">
+            <h2 class="section-title text-center mb-4">Beverages</h2>
+            <div class="row" id="beverages-items">
+                <!-- Items will be loaded dynamically, showing placeholder items for now -->
+                <div class="col-lg-6 mb-4">
+                    <div class="card menu-item-card h-100">
+                        <div class="row g-0">
+                            <div class="col-md-4">
+                                <img src="/images/customer/placeholder-food.jpg" class="img-fluid rounded-start h-100 object-fit-cover" alt="Turkish Coffee">
+                            </div>
+                            <div class="col-md-8">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <h5 class="card-title">Turkish Coffee</h5>
+                                        <span class="menu-item-price">$3.99</span>
+                                    </div>
+                                    <p class="card-text">Rich, strong coffee prepared in a traditional copper pot with cardamom.</p>
+                                    <div class="menu-item-tags mb-2">
+                                        <span class="badge bg-success">Vegetarian</span>
+                                    </div>
+                                    <button class="btn btn-primary btn-sm add-to-cart-btn" data-item-id="501" data-item-name="Turkish Coffee" data-item-price="3.99">
+                                        <i class="fas fa-cart-plus"></i> Add to Cart
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 mb-4">
+                    <div class="card menu-item-card h-100">
+                        <div class="row g-0">
+                            <div class="col-md-4">
+                                <img src="/images/customer/placeholder-food.jpg" class="img-fluid rounded-start h-100 object-fit-cover" alt="Mint Lemonade">
+                            </div>
+                            <div class="col-md-8">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <h5 class="card-title">Mint Lemonade</h5>
+                                        <span class="menu-item-price">$4.99</span>
+                                    </div>
+                                    <p class="card-text">Refreshing homemade lemonade with fresh mint leaves.</p>
+                                    <div class="menu-item-tags mb-2">
+                                        <span class="badge bg-success">Vegetarian</span>
+                                        <span class="badge bg-info">Gluten-Free</span>
+                                    </div>
+                                    <button class="btn btn-primary btn-sm add-to-cart-btn" data-item-id="502" data-item-name="Mint Lemonade" data-item-price="4.99">
+                                        <i class="fas fa-cart-plus"></i> Add to Cart
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Cart Floating Button (Mobile Only) -->
+<div class="position-fixed bottom-0 end-0 p-3 d-lg-none">
+    <button class="btn btn-primary rounded-circle shadow" style="width: 60px; height: 60px;" data-bs-toggle="offcanvas" data-bs-target="#cartSidebar">
+        <i class="fas fa-shopping-cart"></i>
+        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger cart-count">0</span>
+    </button>
+</div>
+
+<%- include('./partials/footer', { additionalScripts: ['/js/customer/menu.js'] }) %>

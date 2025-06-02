@@ -1,0 +1,237 @@
+<%- include('./partials/header', { title: 'Home', currentPath: '/', additionalStyles: ['/css/customer/home.css'] }) %>
+
+<!-- Hero Section -->
+<section class="hero-section position-relative">
+    <div class="hero-image-container">
+        <img src="/images/customer/home-hero.jpg" alt="Baklovah Restaurant" class="hero-image">
+        <div class="hero-overlay"></div>
+    </div>
+    <div class="container position-relative">
+        <div class="hero-content">
+            <div class="row">
+                <div class="col-lg-8 col-xl-6">
+                    <h1 class="display-4 fw-bold text-white mb-3">Authentic Middle Eastern Cuisine</h1>
+                    <p class="lead text-white mb-4">Experience the rich flavors and traditions of Middle Eastern cooking, made with love and the finest ingredients.</p>
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-start">
+                        <a href="/menu" class="btn btn-primary btn-lg px-4 me-md-2">View Menu</a>
+                        <a href="/order" class="btn btn-outline-light btn-lg px-4">Order Online</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Featured Items Section -->
+<section class="py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 mx-auto text-center mb-5">
+                <h2 class="section-title">Featured Dishes</h2>
+                <p class="section-subtitle">Our most popular and beloved creations</p>
+            </div>
+        </div>
+        
+        <div class="row g-4" id="featured-items">
+            <!-- Featured items will be loaded dynamically -->
+            <!-- Placeholder items -->
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100 menu-item-card">
+                    <div class="menu-item-image">
+                        <img src="/images/customer/placeholder-dish.jpg" class="card-img-top" alt="Lamb Kebab">
+                        <div class="menu-item-badge">Popular</div>
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">Lamb Kebab</h5>
+                        <p class="menu-item-price mb-2">$16.99</p>
+                        <p class="card-text">Tender marinated lamb skewers grilled to perfection, served with rice and grilled vegetables.</p>
+                        <div class="d-flex justify-content-between align-items-center mt-3">
+                            <div class="menu-item-tags">
+                                <span class="badge bg-secondary">Gluten-Free</span>
+                                <span class="badge bg-secondary">Protein-Rich</span>
+                            </div>
+                            <button class="btn btn-sm btn-primary add-to-cart-btn" data-item-id="lamb-kebab" data-item-name="Lamb Kebab" data-item-price="16.99">
+                                <i class="fas fa-cart-plus"></i> Add
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100 menu-item-card">
+                    <div class="menu-item-image">
+                        <img src="/images/customer/placeholder-dish.jpg" class="card-img-top" alt="Baklava">
+                        <div class="menu-item-badge">Bestseller</div>
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">Baklava</h5>
+                        <p class="menu-item-price mb-2">$8.99</p>
+                        <p class="card-text">Layers of flaky phyllo dough filled with chopped nuts and sweetened with honey syrup.</p>
+                        <div class="d-flex justify-content-between align-items-center mt-3">
+                            <div class="menu-item-tags">
+                                <span class="badge bg-secondary">Vegetarian</span>
+                                <span class="badge bg-secondary">Sweet</span>
+                            </div>
+                            <button class="btn btn-sm btn-primary add-to-cart-btn" data-item-id="baklava" data-item-name="Baklava" data-item-price="8.99">
+                                <i class="fas fa-cart-plus"></i> Add
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100 menu-item-card">
+                    <div class="menu-item-image">
+                        <img src="/images/customer/placeholder-dish.jpg" class="card-img-top" alt="Hummus Plate">
+                        <div class="menu-item-badge">Staff Pick</div>
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">Hummus Plate</h5>
+                        <p class="menu-item-price mb-2">$10.99</p>
+                        <p class="card-text">Creamy chickpea dip topped with olive oil and paprika, served with warm pita bread.</p>
+                        <div class="d-flex justify-content-between align-items-center mt-3">
+                            <div class="menu-item-tags">
+                                <span class="badge bg-secondary">Vegetarian</span>
+                                <span class="badge bg-secondary">Vegan</span>
+                            </div>
+                            <button class="btn btn-sm btn-primary add-to-cart-btn" data-item-id="hummus-plate" data-item-name="Hummus Plate" data-item-price="10.99">
+                                <i class="fas fa-cart-plus"></i> Add
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="text-center mt-5">
+            <a href="/menu" class="btn btn-outline-primary btn-lg">View Full Menu</a>
+        </div>
+    </div>
+</section>
+
+<!-- About Us Preview Section -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6 mb-4 mb-lg-0">
+                <div class="about-image-container">
+                    <img src="/images/customer/about-preview.jpg" alt="About Baklovah Restaurant" class="img-fluid rounded shadow">
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <h2 class="section-title text-start">Our Story</h2>
+                <p class="section-subtitle text-start">Tradition meets innovation</p>
+                <p>Baklovah Restaurant was founded with a passion for sharing authentic Middle Eastern cuisine with our community. Our recipes have been passed down through generations, each dish telling a story of culture and tradition.</p>
+                <p>Our chefs combine time-honored cooking techniques with modern culinary innovations to create dishes that are both authentic and exciting. We source only the freshest ingredients, many imported directly from the Middle East, to ensure the most authentic flavors.</p>
+                <a href="/about" class="btn btn-primary mt-3">Learn More About Us</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Testimonials Section -->
+<section class="py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 mx-auto text-center mb-5">
+                <h2 class="section-title">What Our Customers Say</h2>
+                <p class="section-subtitle">Don't just take our word for it</p>
+            </div>
+        </div>
+        
+        <div class="row" id="testimonials">
+            <!-- Testimonials will be loaded dynamically -->
+            <!-- Placeholder testimonials -->
+            <div class="col-md-4 mb-4">
+                <div class="card testimonial-card h-100">
+                    <div class="card-body p-4">
+                        <div class="testimonial-rating text-warning mb-3">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <p class="card-text">"The lamb kebab was absolutely delicious! Tender, flavorful, and perfectly cooked. The service was also excellent. Will definitely be coming back!"</p>
+                        <div class="d-flex align-items-center mt-3">
+                            <div class="testimonial-avatar me-3">
+                                <img src="/images/customer/avatar-placeholder.jpg" alt="Customer" class="rounded-circle" width="50" height="50">
+                            </div>
+                            <div>
+                                <h6 class="mb-0">Sarah Johnson</h6>
+                                <small class="text-muted">Local Guide</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4 mb-4">
+                <div class="card testimonial-card h-100">
+                    <div class="card-body p-4">
+                        <div class="testimonial-rating text-warning mb-3">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <p class="card-text">"Best baklava I've ever had outside of my grandmother's kitchen! The phyllo was perfectly flaky and the honey syrup was divine. A must-try for dessert lovers."</p>
+                        <div class="d-flex align-items-center mt-3">
+                            <div class="testimonial-avatar me-3">
+                                <img src="/images/customer/avatar-placeholder.jpg" alt="Customer" class="rounded-circle" width="50" height="50">
+                            </div>
+                            <div>
+                                <h6 class="mb-0">Michael Patel</h6>
+                                <small class="text-muted">Food Blogger</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4 mb-4">
+                <div class="card testimonial-card h-100">
+                    <div class="card-body p-4">
+                        <div class="testimonial-rating text-warning mb-3">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star-half-alt"></i>
+                        </div>
+                        <p class="card-text">"The hummus plate was outstanding - creamy, flavorful, and the perfect consistency. The warm pita bread was the ideal accompaniment. Great for sharing!"</p>
+                        <div class="d-flex align-items-center mt-3">
+                            <div class="testimonial-avatar me-3">
+                                <img src="/images/customer/avatar-placeholder.jpg" alt="Customer" class="rounded-circle" width="50" height="50">
+                            </div>
+                            <div>
+                                <h6 class="mb-0">Jessica Rodriguez</h6>
+                                <small class="text-muted">Regular Customer</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Call to Action Section -->
+<section class="py-5 bg-primary text-white">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-8 text-center text-lg-start">
+                <h2 class="fw-bold mb-3">Ready to experience our delicious food?</h2>
+                <p class="lead mb-0">Order online for pickup or delivery and enjoy our authentic Middle Eastern cuisine from the comfort of your home.</p>
+            </div>
+            <div class="col-lg-4 text-center text-lg-end mt-4 mt-lg-0">
+                <a href="/order" class="btn btn-light btn-lg px-4">Order Now</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<%- include('./partials/footer', { additionalScripts: ['/js/customer/home.js'] }) %>

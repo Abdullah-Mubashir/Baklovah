@@ -1,0 +1,209 @@
+<%- include('./partials/header', { title: 'User Profile', currentPath: '/admin/profile', user: user, actionButtons: '' }) %>
+
+<div class="container-fluid px-0">
+    <div class="row">
+        <!-- Profile Information -->
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Profile Information</h5>
+                </div>
+                <div class="card-body">
+                    <form id="profileForm">
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Name</label>
+                            <input type="text" class="form-control" id="name" value="<%= user.name %>" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="email" value="<%= user.email %>" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="role" class="form-label">Role</label>
+                            <input type="text" class="form-control" id="role" value="<%= user.role %>" readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label for="lastLogin" class="form-label">Last Login</label>
+                            <input type="text" class="form-control" id="lastLogin" value="<%= user.last_login ? new Date(user.last_login).toLocaleString() : 'Never' %>" readonly>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Update Profile</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Change Password -->
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Change Password</h5>
+                </div>
+                <div class="card-body">
+                    <form id="passwordForm">
+                        <div class="mb-3">
+                            <label for="currentPassword" class="form-label">Current Password</label>
+                            <input type="password" class="form-control" id="currentPassword" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="newPassword" class="form-label">New Password</label>
+                            <input type="password" class="form-control" id="newPassword" required>
+                            <div class="form-text">Password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, and one number.</div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="confirmPassword" class="form-label">Confirm New Password</label>
+                            <input type="password" class="form-control" id="confirmPassword" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Change Password</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <!-- Preferences -->
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Preferences</h5>
+                </div>
+                <div class="card-body">
+                    <form id="preferencesForm">
+                        <div class="mb-3">
+                            <label for="theme" class="form-label">Theme</label>
+                            <select class="form-select" id="theme">
+                                <option value="light">Light</option>
+                                <option value="dark">Dark</option>
+                                <option value="system">System Default</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="language" class="form-label">Language</label>
+                            <select class="form-select" id="language">
+                                <option value="en">English</option>
+                                <option value="es">Spanish</option>
+                                <option value="fr">French</option>
+                                <option value="ar">Arabic</option>
+                            </select>
+                        </div>
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="emailNotifications" checked>
+                            <label class="form-check-label" for="emailNotifications">Receive Email Notifications</label>
+                        </div>
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="desktopNotifications" checked>
+                            <label class="form-check-label" for="desktopNotifications">Enable Desktop Notifications</label>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Save Preferences</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Two-Factor Authentication -->
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Two-Factor Authentication</h5>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">Two-factor authentication adds an extra layer of security to your account by requiring more than just a password to sign in.</p>
+                    
+                    <div class="mb-3">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="enable2FA">
+                            <label class="form-check-label" for="enable2FA">Enable Two-Factor Authentication</label>
+                        </div>
+                    </div>
+                    
+                    <div id="2faSetup" class="d-none">
+                        <div class="mb-3">
+                            <label class="form-label">Scan this QR code with your authenticator app</label>
+                            <div class="text-center p-3 border rounded mb-3">
+                                <img src="/img/sample-qr-code.png" alt="QR Code" class="img-fluid" style="max-width: 200px;">
+                            </div>
+                            <div class="form-text">If you can't scan the QR code, use this code instead: <code>ABCD-EFGH-IJKL-MNOP</code></div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="verificationCode" class="form-label">Verification Code</label>
+                            <input type="text" class="form-control" id="verificationCode" placeholder="Enter the 6-digit code">
+                        </div>
+                        
+                        <button type="button" class="btn btn-primary" id="verify2FABtn">Verify & Enable</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Session Management -->
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card mb-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Active Sessions</h5>
+                    <button class="btn btn-sm btn-danger" id="terminateAllBtn">Terminate All Other Sessions</button>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Device</th>
+                                    <th scope="col">Location</th>
+                                    <th scope="col">IP Address</th>
+                                    <th scope="col">Last Active</th>
+                                    <th scope="col">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <i class="bi bi-laptop fs-4 me-2"></i>
+                                            <div>
+                                                <div class="fw-bold">MacBook Pro</div>
+                                                <div class="text-muted small">Chrome 98.0.4758.102</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>San Francisco, CA</td>
+                                    <td>192.168.1.1</td>
+                                    <td>Current session</td>
+                                    <td><span class="badge bg-success">Current Session</span></td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <i class="bi bi-phone fs-4 me-2"></i>
+                                            <div>
+                                                <div class="fw-bold">iPhone 13</div>
+                                                <div class="text-muted small">Safari 15.4</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>New York, NY</td>
+                                    <td>203.0.113.1</td>
+                                    <td>2 hours ago</td>
+                                    <td><button class="btn btn-sm btn-outline-danger">Terminate</button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Toast container for notifications -->
+<div class="toast-container position-fixed bottom-0 end-0 p-3"></div>
+
+<!-- Mock Data for Testing -->
+<script src="/js/admin/mock-data.js"></script>
+
+<!-- JavaScript for Profile Page -->
+<script src="/js/admin/profile.js"></script>
+
+<%- include('./partials/footer') %>

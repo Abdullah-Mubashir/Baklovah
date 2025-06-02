@@ -1,0 +1,317 @@
+<%- include('./partials/header', { title: 'Contact Us', currentPath: '/contact', additionalStyles: ['/css/customer/contact.css'] }) %>
+
+<!-- Contact Hero Section -->
+<section class="contact-hero-section position-relative">
+    <div class="hero-image-container">
+        <img src="/images/customer/contact-hero.jpg" alt="Contact Baklovah" class="hero-image">
+        <div class="hero-overlay"></div>
+    </div>
+    <div class="container position-relative hero-content text-center">
+        <h1 class="display-4 fw-bold text-white mb-3">Contact Us</h1>
+        <p class="lead text-white mb-4">We'd love to hear from you! Reach out with questions, feedback, or to make a reservation</p>
+    </div>
+</section>
+
+<!-- Contact Information Section -->
+<section class="py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 mx-auto text-center mb-5">
+                <h2 class="section-title">Get In Touch</h2>
+                <p class="section-subtitle">We're here to help and answer any questions you might have</p>
+            </div>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center p-4">
+                        <div class="contact-icon mb-3">
+                            <i class="fas fa-map-marker-alt fa-3x text-primary"></i>
+                        </div>
+                        <h4 class="card-title">Visit Us</h4>
+                        <p class="card-text">123 Middle Eastern Blvd<br>Foodie District<br>New York, NY 10001</p>
+                        <a href="https://maps.google.com" target="_blank" class="btn btn-outline-primary mt-3">Get Directions</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center p-4">
+                        <div class="contact-icon mb-3">
+                            <i class="fas fa-phone-alt fa-3x text-primary"></i>
+                        </div>
+                        <h4 class="card-title">Call Us</h4>
+                        <p class="card-text">For reservations:<br><strong>(212) 555-1234</strong></p>
+                        <p class="card-text">For catering inquiries:<br><strong>(212) 555-5678</strong></p>
+                        <a href="tel:2125551234" class="btn btn-outline-primary mt-3">Call Now</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center p-4">
+                        <div class="contact-icon mb-3">
+                            <i class="fas fa-envelope fa-3x text-primary"></i>
+                        </div>
+                        <h4 class="card-title">Email Us</h4>
+                        <p class="card-text">General inquiries:<br><strong>info@baklovah.com</strong></p>
+                        <p class="card-text">Feedback:<br><strong>feedback@baklovah.com</strong></p>
+                        <a href="mailto:info@baklovah.com" class="btn btn-outline-primary mt-3">Send Email</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Hours Section -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 mx-auto text-center mb-5">
+                <h2 class="section-title">Hours of Operation</h2>
+                <p class="section-subtitle">When you can visit us or order online</p>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <div class="card border-0 shadow">
+                    <div class="card-body p-4">
+                        <div class="table-responsive">
+                            <table class="table table-borderless hours-table mb-0">
+                                <tbody>
+                                    <tr>
+                                        <td class="fw-bold">Monday</td>
+                                        <td>11:00 AM - 10:00 PM</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bold">Tuesday</td>
+                                        <td>11:00 AM - 10:00 PM</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bold">Wednesday</td>
+                                        <td>11:00 AM - 10:00 PM</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bold">Thursday</td>
+                                        <td>11:00 AM - 10:00 PM</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bold">Friday</td>
+                                        <td>11:00 AM - 11:00 PM</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bold">Saturday</td>
+                                        <td>10:00 AM - 11:00 PM</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bold">Sunday</td>
+                                        <td>10:00 AM - 9:00 PM</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="text-center mt-4">
+                            <p class="mb-0"><strong>Note:</strong> Kitchen closes 30 minutes before closing time. Last orders must be placed by then.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Contact Form Section -->
+<section class="py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 mx-auto text-center mb-5">
+                <h2 class="section-title">Send Us a Message</h2>
+                <p class="section-subtitle">We'll get back to you as soon as possible</p>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <div class="card border-0 shadow">
+                    <div class="card-body p-4 p-md-5">
+                        <form id="contact-form" class="needs-validation" novalidate>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label for="name" class="form-label">Your Name</label>
+                                    <input type="text" class="form-control" id="name" placeholder="John Doe" required>
+                                    <div class="invalid-feedback">
+                                        Please provide your name.
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <label for="email" class="form-label">Email Address</label>
+                                    <input type="email" class="form-control" id="email" placeholder="john@example.com" required>
+                                    <div class="invalid-feedback">
+                                        Please provide a valid email address.
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <label for="phone" class="form-label">Phone Number</label>
+                                    <input type="tel" class="form-control" id="phone" placeholder="(123) 456-7890">
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <label for="subject" class="form-label">Subject</label>
+                                    <select class="form-select" id="subject" required>
+                                        <option value="" selected disabled>Select a subject</option>
+                                        <option value="General Inquiry">General Inquiry</option>
+                                        <option value="Reservation">Reservation</option>
+                                        <option value="Catering">Catering</option>
+                                        <option value="Feedback">Feedback</option>
+                                        <option value="Other">Other</option>
+                                    </select>
+                                    <div class="invalid-feedback">
+                                        Please select a subject.
+                                    </div>
+                                </div>
+                                
+                                <div class="col-12">
+                                    <label for="message" class="form-label">Your Message</label>
+                                    <textarea class="form-control" id="message" rows="5" placeholder="How can we help you?" required></textarea>
+                                    <div class="invalid-feedback">
+                                        Please provide a message.
+                                    </div>
+                                </div>
+                                
+                                <div class="col-12">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="newsletter" checked>
+                                        <label class="form-check-label" for="newsletter">
+                                            Subscribe to our newsletter for promotions and updates
+                                        </label>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-12 text-center mt-4">
+                                    <button type="submit" class="btn btn-primary btn-lg px-5" id="submit-contact-form">
+                                        <i class="fas fa-paper-plane me-2"></i>Send Message
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Map Section -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 mx-auto text-center mb-5">
+                <h2 class="section-title">Find Us</h2>
+                <p class="section-subtitle">Located in the heart of the city</p>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-12">
+                <div class="map-container shadow">
+                    <!-- Placeholder for Google Maps iframe -->
+                    <div class="ratio ratio-16x9">
+                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3022.9663095343008!2d-74.00425882426698!3d40.74076974375838!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c259bf5c1654f3%3A0xc80f9cfce5383d5d!2sMadison%20Square%20Garden!5e0!3m2!1sen!2sus!4v1687453767932!5m2!1sen!2sus" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FAQ Section -->
+<section class="py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 mx-auto text-center mb-5">
+                <h2 class="section-title">Frequently Asked Questions</h2>
+                <p class="section-subtitle">Answers to common questions about our restaurant</p>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <div class="accordion" id="faqAccordion">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingOne">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                Do you take reservations?
+                            </button>
+                        </h2>
+                        <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                Yes, we accept reservations for parties of all sizes. We recommend making reservations for dinner service, especially on weekends. You can make a reservation by calling us at (212) 555-1234 or using our online reservation system.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingTwo">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                Do you offer catering services?
+                            </button>
+                        </h2>
+                        <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                Yes, we offer full-service catering for events of all sizes, from intimate gatherings to large corporate events. Our catering menu includes a variety of Middle Eastern favorites that can be customized to meet your specific needs. Please contact our catering department at (212) 555-5678 or email catering@baklovah.com for more information.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingThree">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                                Do you accommodate dietary restrictions?
+                            </button>
+                        </h2>
+                        <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                Absolutely! We offer a variety of vegetarian, vegan, and gluten-free options on our menu. Our kitchen staff is trained to handle food allergies and dietary restrictions with care. Please inform your server about any dietary needs when ordering, and we'll do our best to accommodate you.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingFour">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                                What payment methods do you accept?
+                            </button>
+                        </h2>
+                        <div id="collapseFour" class="accordion-collapse collapse" aria-labelledby="headingFour" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                We accept all major credit cards (Visa, MasterCard, American Express, Discover), cash, and digital payment methods like Apple Pay and Google Pay. For catering orders, we also accept corporate checks with prior arrangement.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingFive">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
+                                Is there parking available?
+                            </button>
+                        </h2>
+                        <div id="collapseFive" class="accordion-collapse collapse" aria-labelledby="headingFive" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                We have a small parking lot behind our restaurant with limited spaces available on a first-come, first-served basis. There is also street parking available in the surrounding area and a public parking garage one block away on Main Street.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<%- include('./partials/footer', { additionalScripts: ['/js/customer/contact.js'] }) %>

@@ -1,0 +1,56 @@
+{"level":"warn","message":"MySQL connection failed: . Will use SQLite instead.","timestamp":"2025-06-02T17:58:57.951Z"}
+{"level":"info","message":"Using SQLite database","timestamp":"2025-06-02T17:58:57.952Z"}
+{"level":"warn","message":"MySQL connection failed: . Will use SQLite instead.","timestamp":"2025-06-02T17:59:08.715Z"}
+{"level":"info","message":"Using SQLite database","timestamp":"2025-06-02T17:59:08.716Z"}
+{"level":"warn","message":"MySQL connection failed: . Will use SQLite instead.","timestamp":"2025-06-02T18:08:40.217Z"}
+{"level":"info","message":"Using SQLite database","timestamp":"2025-06-02T18:08:40.218Z"}
+{"level":"warn","message":"MySQL connection failed: . Will use SQLite instead.","timestamp":"2025-06-02T18:10:15.766Z"}
+{"level":"info","message":"Using SQLite database","timestamp":"2025-06-02T18:10:15.767Z"}
+{"level":"warn","message":"MySQL connection failed: . Will use SQLite instead.","timestamp":"2025-06-02T18:11:28.344Z"}
+{"level":"info","message":"Using SQLite database","timestamp":"2025-06-02T18:11:28.345Z"}
+{"level":"warn","message":"MySQL connection failed: . Will use SQLite instead.","timestamp":"2025-06-02T18:13:25.832Z"}
+{"level":"info","message":"Using SQLite database","timestamp":"2025-06-02T18:13:25.833Z"}
+{"level":"warn","message":"MySQL connection failed: . Will use SQLite instead.","timestamp":"2025-06-02T18:16:43.208Z"}
+{"level":"info","message":"Using SQLite database","timestamp":"2025-06-02T18:16:43.209Z"}
+{"level":"warn","message":"MySQL connection failed: . Will use SQLite instead.","timestamp":"2025-06-02T18:18:00.609Z"}
+{"level":"info","message":"Using SQLite database","timestamp":"2025-06-02T18:18:00.610Z"}
+{"level":"warn","message":"MySQL connection failed: . Will use SQLite instead.","timestamp":"2025-06-02T18:18:52.219Z"}
+{"level":"info","message":"Using SQLite database","timestamp":"2025-06-02T18:18:52.220Z"}
+{"level":"warn","message":"MySQL connection failed: . Will use SQLite instead.","timestamp":"2025-06-02T18:19:33.016Z"}
+{"level":"info","message":"Using SQLite database","timestamp":"2025-06-02T18:19:33.018Z"}
+{"level":"warn","message":"MySQL connection failed: . Will use SQLite instead.","timestamp":"2025-06-02T18:20:22.623Z"}
+{"level":"info","message":"Using SQLite database","timestamp":"2025-06-02T18:20:22.624Z"}
+{"level":"warn","message":"MySQL connection failed: . Will use SQLite instead.","timestamp":"2025-06-02T18:22:23.000Z"}
+{"level":"info","message":"Using SQLite database","timestamp":"2025-06-02T18:22:23.001Z"}
+{"level":"warn","message":"MySQL connection failed: . Will use SQLite instead.","timestamp":"2025-06-02T18:23:42.835Z"}
+{"level":"info","message":"Using SQLite database","timestamp":"2025-06-02T18:23:42.837Z"}
+{"level":"warn","message":"MySQL connection failed: . Will use SQLite instead.","timestamp":"2025-06-02T18:25:51.048Z"}
+{"level":"info","message":"Using SQLite database","timestamp":"2025-06-02T18:25:51.049Z"}
+{"level":"warn","message":"MySQL connection failed: . Will use SQLite instead.","timestamp":"2025-06-02T18:28:27.672Z"}
+{"level":"info","message":"Using SQLite database","timestamp":"2025-06-02T18:28:27.674Z"}
+{"level":"warn","message":"MySQL connection failed: . Will use SQLite instead.","timestamp":"2025-06-02T18:38:35.150Z"}
+{"level":"info","message":"Using SQLite database","timestamp":"2025-06-02T18:38:35.151Z"}
+{"level":"warn","message":"MySQL connection failed: . Will use SQLite instead.","timestamp":"2025-06-02T18:41:22.177Z"}
+{"level":"info","message":"Using SQLite database","timestamp":"2025-06-02T18:41:22.178Z"}
+{"level":"warn","message":"MySQL connection failed: . Will use SQLite instead.","timestamp":"2025-06-02T18:45:10.158Z"}
+{"level":"info","message":"Using SQLite database","timestamp":"2025-06-02T18:45:10.159Z"}
+{"level":"warn","message":"MySQL connection failed: . Will use SQLite instead.","timestamp":"2025-06-02T18:49:26.129Z"}
+{"level":"info","message":"Using SQLite database","timestamp":"2025-06-02T18:49:26.130Z"}
+{"level":"warn","message":"MySQL connection failed: . Will use SQLite instead.","timestamp":"2025-06-02T18:52:34.438Z"}
+{"level":"info","message":"Using SQLite database","timestamp":"2025-06-02T18:52:34.439Z"}
+{"level":"warn","message":"MySQL connection failed: . Will use SQLite instead.","timestamp":"2025-06-02T20:11:35.263Z"}
+{"level":"info","message":"Using SQLite database","timestamp":"2025-06-02T20:11:35.268Z"}
+{"level":"warn","message":"MySQL connection failed: . Will use SQLite instead.","timestamp":"2025-06-02T20:11:54.497Z"}
+{"level":"info","message":"Using SQLite database","timestamp":"2025-06-02T20:11:54.499Z"}
+{"level":"warn","message":"MySQL connection failed: . Will use SQLite instead.","timestamp":"2025-06-02T20:18:40.518Z"}
+{"level":"info","message":"Using SQLite database","timestamp":"2025-06-02T20:18:40.520Z"}
+{"level":"warn","message":"MySQL connection failed: . Will use SQLite instead.","timestamp":"2025-06-02T20:24:26.035Z"}
+{"level":"info","message":"Using SQLite database","timestamp":"2025-06-02T20:24:26.037Z"}
+{"level":"warn","message":"MySQL connection failed: . Will use SQLite instead.","timestamp":"2025-06-02T20:54:40.962Z"}
+{"level":"info","message":"Using SQLite database","timestamp":"2025-06-02T20:54:40.963Z"}
+{"level":"warn","message":"MySQL connection failed: . Will use SQLite instead.","timestamp":"2025-06-02T21:40:17.632Z"}
+{"level":"info","message":"Using SQLite database","timestamp":"2025-06-02T21:40:17.633Z"}
+{"level":"warn","message":"MySQL connection failed: . Will use SQLite instead.","timestamp":"2025-06-02T21:51:28.882Z"}
+{"level":"info","message":"Using SQLite database","timestamp":"2025-06-02T21:51:28.883Z"}
+{"level":"warn","message":"MySQL connection failed: . Will use SQLite instead.","timestamp":"2025-06-02T22:06:53.672Z"}
+{"level":"info","message":"Using SQLite database","timestamp":"2025-06-02T22:06:53.673Z"}

@@ -1,0 +1,156 @@
+<%- include('./partials/header', { title: 'Dashboard', currentPath: '/admin/dashboard', user: user, actionButtons: '' }) %>
+
+<div class="container-fluid px-0">
+    <!-- Stats Overview -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card dashboard-card bg-primary bg-opacity-10 h-100">
+                <div class="card-body">
+                    <h6 class="stat-label">Total Orders</h6>
+                    <div class="stat-value text-primary" id="totalOrders">-</div>
+                    <div class="mt-3 text-secondary">Orders placed</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card dashboard-card bg-success bg-opacity-10 h-100">
+                <div class="card-body">
+                    <h6 class="stat-label">Revenue</h6>
+                    <div class="stat-value text-success" id="totalRevenue">-</div>
+                    <div class="mt-3 text-secondary">From completed orders</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card dashboard-card bg-warning bg-opacity-10 h-100">
+                <div class="card-body">
+                    <h6 class="stat-label">Menu Items</h6>
+                    <div class="stat-value text-warning" id="menuItems">-</div>
+                    <div class="mt-3 text-secondary">Active items</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card dashboard-card bg-danger bg-opacity-10 h-100">
+                <div class="card-body">
+                    <h6 class="stat-label">Item Views</h6>
+                    <div class="stat-value text-danger" id="totalViews">-</div>
+                    <div class="mt-3 text-secondary">Across all items</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts Row -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5 class="mb-0">Orders by Status</h5>
+                </div>
+                <div class="card-body">
+                    <div class="chart-container">
+                        <canvas id="orderStatusChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5 class="mb-0">Orders & Revenue (Last 7 Days)</h5>
+                </div>
+                <div class="card-body">
+                    <div class="chart-container">
+                        <canvas id="orderDateChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Top Items Row -->
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Most Viewed Items</h5>
+                    <a href="/admin/analytics" class="btn btn-sm btn-outline-primary">See All</a>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Item</th>
+                                    <th>Views</th>
+                                </tr>
+                            </thead>
+                            <tbody id="mostViewedTable">
+                                <tr>
+                                    <td colspan="2" class="text-center">Loading...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Most Purchased Items</h5>
+                    <a href="/admin/analytics" class="btn btn-sm btn-outline-primary">See All</a>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Item</th>
+                                    <th>Purchases</th>
+                                </tr>
+                            </thead>
+                            <tbody id="mostPurchasedTable">
+                                <tr>
+                                    <td colspan="2" class="text-center">Loading...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Most Liked Items</h5>
+                    <a href="/admin/analytics" class="btn btn-sm btn-outline-primary">See All</a>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Item</th>
+                                    <th>Likes</th>
+                                </tr>
+                            </thead>
+                            <tbody id="mostLikedTable">
+                                <tr>
+                                    <td colspan="2" class="text-center">Loading...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Dashboard Scripts -->
+<%- include('./partials/dashboard-scripts') %>
+
+
+<%- include('./partials/footer') %>

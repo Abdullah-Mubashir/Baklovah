@@ -1,0 +1,260 @@
+/**
+ * Baklovah Restaurant - Order Page Styles
+ * Specific styles for the order page of the customer-facing website
+ */
+
+/* Order Hero Section */
+.order-hero-section {
+    height: 30vh;
+    min-height: 200px;
+    color: white;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.order-hero-image-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+.order-hero-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.order-hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.7));
+}
+
+.order-hero-content {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    z-index: 1;
+}
+
+/* Order Steps */
+.order-steps {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 2rem 0;
+}
+
+.step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    z-index: 1;
+}
+
+.step-number {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #e9ecef;
+    color: #6c757d;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+    transition: all 0.3s ease;
+}
+
+.step-text {
+    font-size: 0.9rem;
+    color: #6c757d;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.step-connector {
+    flex-grow: 1;
+    height: 3px;
+    background-color: #e9ecef;
+    margin: 0 10px;
+    position: relative;
+    top: -20px;
+    z-index: 0;
+}
+
+.step.active .step-number {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.step.active .step-text {
+    color: var(--primary-color);
+    font-weight: 600;
+}
+
+.step.completed .step-number {
+    background-color: var(--success-color);
+    color: white;
+}
+
+.step.completed .step-text {
+    color: var(--success-color);
+}
+
+/* Menu Item Cards in Order Page */
+.menu-item-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.menu-item-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+}
+
+.menu-item-price {
+    font-weight: 700;
+    color: var(--primary-color);
+}
+
+/* Quantity Controls */
+.quantity-control {
+    width: 120px;
+}
+
+.quantity-control .form-control {
+    text-align: center;
+}
+
+.quantity-control button {
+    width: 30px;
+}
+
+/* Category Buttons */
+.category-btn {
+    white-space: nowrap;
+}
+
+/* Order Summary */
+.order-summary {
+    border: none;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.order-summary .card-header {
+    border-bottom: none;
+}
+
+.order-item {
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.order-item:last-child {
+    border-bottom: none;
+}
+
+.order-item-title {
+    font-weight: 600;
+    margin-bottom: 0.2rem;
+}
+
+.order-item-price {
+    font-weight: 600;
+    color: var(--primary-color);
+}
+
+.order-item-quantity {
+    font-size: 0.9rem;
+    color: #6c757d;
+}
+
+.order-item-total {
+    font-weight: 600;
+}
+
+.order-item-remove {
+    color: var(--danger-color);
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.order-item-remove:hover {
+    color: #bd2130;
+}
+
+/* Confirmation Section */
+.confirmation-icon {
+    margin: 2rem 0;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 992px) {
+    .order-steps {
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+    
+    .step {
+        margin-bottom: 1rem;
+    }
+    
+    .order-summary {
+        position: static !important;
+        margin-top: 2rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .order-hero-section {
+        height: 25vh;
+    }
+    
+    .step-text {
+        font-size: 0.8rem;
+    }
+    
+    .step-number {
+        width: 35px;
+        height: 35px;
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .order-hero-section {
+        height: 20vh;
+    }
+    
+    .order-hero-content h1 {
+        font-size: 1.8rem;
+    }
+    
+    .order-steps {
+        margin: 1rem 0;
+    }
+    
+    .step-connector {
+        width: 20px;
+        margin: 0 5px;
+    }
+    
+    .step-number {
+        width: 30px;
+        height: 30px;
+        font-size: 0.8rem;
+    }
+    
+    .step-text {
+        font-size: 0.7rem;
+    }
+}

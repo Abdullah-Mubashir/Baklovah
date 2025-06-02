@@ -1,0 +1,117 @@
+/**
+ * Baklovah Restaurant - Privacy Policy Page Styles
+ */
+
+/* Hero Section */
+.privacy-hero-section {
+    height: 40vh;
+    min-height: 300px;
+    overflow: hidden;
+}
+
+.hero-image-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.hero-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+}
+
+.hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+}
+
+.hero-content {
+    z-index: 1;
+    padding-top: 120px;
+}
+
+/* Privacy Content Styles */
+.privacy-content {
+    line-height: 1.7;
+    color: #333;
+}
+
+.privacy-section {
+    margin-bottom: 3rem;
+}
+
+.privacy-section h2 {
+    color: #333;
+    margin-bottom: 1.5rem;
+    font-weight: 600;
+    position: relative;
+    padding-bottom: 0.75rem;
+}
+
+.privacy-section h2::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 60px;
+    height: 3px;
+    background-color: var(--bs-primary);
+}
+
+.privacy-section p {
+    margin-bottom: 1.25rem;
+}
+
+.privacy-section ul {
+    padding-left: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.privacy-section ul li {
+    margin-bottom: 0.75rem;
+}
+
+.privacy-section strong {
+    font-weight: 600;
+}
+
+/* Table Styles */
+.table {
+    margin-bottom: 2rem;
+}
+
+.table th {
+    font-weight: 600;
+}
+
+.table td, .table th {
+    padding: 1rem;
+    vertical-align: top;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .privacy-hero-section {
+        height: 30vh;
+    }
+    
+    .hero-content {
+        padding-top: 100px;
+    }
+    
+    .privacy-section h2 {
+        font-size: 1.5rem;
+    }
+    
+    .table td, .table th {
+        padding: 0.75rem;
+    }
+}

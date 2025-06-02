@@ -1,0 +1,46 @@
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript dependencies -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+    
+    <!-- Common admin scripts -->
+    <script>
+        // Handle logout
+        document.getElementById('logoutBtn')?.addEventListener('click', function(e) {
+            e.preventDefault();
+            // Clear the token and user from localStorage
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            // Redirect to login page
+            window.location.href = '/admin';
+        });
+        
+        // TEMPORARY: Authentication bypass for development
+        document.addEventListener('DOMContentLoaded', function() {
+            // For development, set a mock token if none exists
+            if (!localStorage.getItem('token')) {
+                console.log('Setting mock authentication token for development');
+                localStorage.setItem('token', 'dev-bypass-token');
+                localStorage.setItem('user', JSON.stringify({
+                    id: 1,
+                    username: 'admin',
+                    role: 'admin'
+                }));
+            }
+            
+            // Uncomment for production
+            /*
+            const token = localStorage.getItem('token');
+            // If no token is found and we're not on the login page, redirect to login
+            if (!token && !window.location.pathname.includes('/admin/login') && window.location.pathname !== '/admin') {
+                window.location.href = '/admin';
+            }
+            */
+        });
+    </script>
+</body>
+</html>

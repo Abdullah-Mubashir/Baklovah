@@ -1,0 +1,70 @@
+{"level":"info","message":"Server running on port 3001","timestamp":"2025-06-02T16:36:25.394Z"}
+{"level":"error","message":"404 - ENOENT: no such file or directory, stat '/Users/muneerahmed/baklovahWeb/public/index.html' - /?vscodeBrowserReqId=1748882206566 - GET - ::1","timestamp":"2025-06-02T16:36:46.572Z"}
+{"level":"info","message":"Server running on port 3001","timestamp":"2025-06-02T17:05:00.531Z"}
+{"level":"error","message":"404 - ENOENT: no such file or directory, stat '/Users/muneerahmed/baklovahWeb/public/index.html' - /?vscodeBrowserReqId=1748883918099 - GET - ::1","timestamp":"2025-06-02T17:05:18.105Z"}
+{"level":"info","message":"Server running on port 3001","timestamp":"2025-06-02T17:08:21.915Z"}
+{"level":"error","message":"404 - ENOENT: no such file or directory, stat '/Users/muneerahmed/baklovahWeb/public/index.html' - /?vscodeBrowserReqId=1748884256654 - GET - ::1","timestamp":"2025-06-02T17:10:56.657Z"}
+{"level":"info","message":"Server running on port 3001","timestamp":"2025-06-02T17:16:21.015Z"}
+{"level":"error","message":"404 - ENOENT: no such file or directory, stat '/Users/muneerahmed/baklovahWeb/public/index.html' - /?vscodeBrowserReqId=1748884597724 - GET - ::1","timestamp":"2025-06-02T17:16:37.740Z"}
+{"level":"error","message":"404 - ENOENT: no such file or directory, stat '/Users/muneerahmed/baklovahWeb/public/index.html' - /?vscodeBrowserReqId=1748885628733 - GET - ::1","timestamp":"2025-06-02T17:33:48.743Z"}
+{"level":"error","message":"404 - ENOENT: no such file or directory, stat '/Users/muneerahmed/baklovahWeb/public/index.html' - /?vscodeBrowserReqId=1748886033643 - GET - ::1","timestamp":"2025-06-02T17:40:33.647Z"}
+{"level":"error","message":"404 - ENOENT: no such file or directory, stat '/Users/muneerahmed/baklovahWeb/public/index.html' - /?vscodeBrowserReqId=1748886285676 - GET - ::1","timestamp":"2025-06-02T17:44:45.679Z"}
+{"level":"error","message":"404 - ENOENT: no such file or directory, stat '/Users/muneerahmed/baklovahWeb/public/index.html' - /?vscodeBrowserReqId=1748886298107 - GET - ::1","timestamp":"2025-06-02T17:44:58.110Z"}
+{"level":"info","message":"Server running on port 3002","timestamp":"2025-06-02T17:59:08.723Z"}
+{"level":"info","message":"Database type: sqlite","timestamp":"2025-06-02T17:59:08.723Z"}
+{"level":"info","message":"Server running on port 3002","timestamp":"2025-06-02T18:08:40.220Z"}
+{"level":"info","message":"Database type: sqlite","timestamp":"2025-06-02T18:08:40.220Z"}
+{"level":"info","message":"Server running on port 3002","timestamp":"2025-06-02T18:10:15.770Z"}
+{"level":"info","message":"Database type: sqlite","timestamp":"2025-06-02T18:10:15.770Z"}
+{"level":"info","message":"Server running on port 3002","timestamp":"2025-06-02T18:11:28.348Z"}
+{"level":"info","message":"Database type: sqlite","timestamp":"2025-06-02T18:11:28.348Z"}
+{"level":"info","message":"Server running on port 3002","timestamp":"2025-06-02T18:13:25.836Z"}
+{"level":"info","message":"Database type: sqlite","timestamp":"2025-06-02T18:13:25.836Z"}
+{"level":"info","message":"Server running on port 3002","timestamp":"2025-06-02T18:16:43.212Z"}
+{"level":"info","message":"Database type: sqlite","timestamp":"2025-06-02T18:16:43.212Z"}
+{"level":"info","message":"Server running on port 3002","timestamp":"2025-06-02T18:18:00.613Z"}
+{"level":"info","message":"Database type: sqlite","timestamp":"2025-06-02T18:18:00.613Z"}
+{"level":"info","message":"Server running on port 3002","timestamp":"2025-06-02T18:18:52.223Z"}
+{"level":"info","message":"Database type: sqlite","timestamp":"2025-06-02T18:18:52.223Z"}
+{"level":"info","message":"Server running on port 3002","timestamp":"2025-06-02T18:19:33.020Z"}
+{"level":"info","message":"Database type: sqlite","timestamp":"2025-06-02T18:19:33.020Z"}
+{"level":"info","message":"Server running on port 3002","timestamp":"2025-06-02T18:20:22.626Z"}
+{"level":"info","message":"Database type: sqlite","timestamp":"2025-06-02T18:20:22.626Z"}
+{"level":"info","message":"Server running on port 3002","timestamp":"2025-06-02T18:22:23.004Z"}
+{"level":"info","message":"Database type: sqlite","timestamp":"2025-06-02T18:22:23.004Z"}
+{"level":"info","message":"Server running on port 3002","timestamp":"2025-06-02T18:23:42.841Z"}
+{"level":"info","message":"Database type: sqlite","timestamp":"2025-06-02T18:23:42.841Z"}
+{"level":"info","message":"Server running on port 3002","timestamp":"2025-06-02T18:25:51.052Z"}
+{"level":"info","message":"Database type: sqlite","timestamp":"2025-06-02T18:25:51.052Z"}
+{"level":"info","message":"Server running on port 3002","timestamp":"2025-06-02T18:28:27.676Z"}
+{"level":"info","message":"Database type: sqlite","timestamp":"2025-06-02T18:28:27.676Z"}
+{"level":"info","message":"Server running on port 3001","timestamp":"2025-06-02T18:38:35.153Z"}
+{"level":"info","message":"Database type: sqlite","timestamp":"2025-06-02T18:38:35.153Z"}
+{"level":"info","message":"Server running on port 3001","timestamp":"2025-06-02T18:41:22.181Z"}
+{"level":"info","message":"Database type: sqlite","timestamp":"2025-06-02T18:41:22.181Z"}
+{"level":"info","message":"Server running on port 3001","timestamp":"2025-06-02T18:45:10.162Z"}
+{"level":"info","message":"Database type: sqlite","timestamp":"2025-06-02T18:45:10.162Z"}
+{"level":"info","message":"Server running on port 3001","timestamp":"2025-06-02T18:49:26.132Z"}
+{"level":"info","message":"Database type: sqlite","timestamp":"2025-06-02T18:49:26.132Z"}
+{"level":"info","message":"Server running on port 3001","timestamp":"2025-06-02T18:52:34.441Z"}
+{"level":"info","message":"Database type: sqlite","timestamp":"2025-06-02T18:52:34.441Z"}
+{"level":"info","message":"Server running on port 3002","timestamp":"2025-06-02T20:11:54.502Z"}
+{"level":"info","message":"Database type: sqlite","timestamp":"2025-06-02T20:11:54.502Z"}
+{"level":"info","message":"Server running on port 3002","timestamp":"2025-06-02T20:18:40.523Z"}
+{"level":"info","message":"Database type: sqlite","timestamp":"2025-06-02T20:18:40.524Z"}
+{"level":"info","message":"Server running on port 3002","timestamp":"2025-06-02T20:24:26.041Z"}
+{"level":"info","message":"Database type: sqlite","timestamp":"2025-06-02T20:24:26.041Z"}
+{"level":"info","message":"New client connected","timestamp":"2025-06-02T20:24:59.095Z"}
+{"level":"info","message":"Client disconnected","timestamp":"2025-06-02T20:25:04.309Z"}
+{"level":"info","message":"New client connected","timestamp":"2025-06-02T20:32:58.772Z"}
+{"level":"info","message":"Client disconnected","timestamp":"2025-06-02T20:33:02.422Z"}
+{"level":"info","message":"Server running on port 3001","timestamp":"2025-06-02T20:54:40.967Z"}
+{"level":"info","message":"Database type: sqlite","timestamp":"2025-06-02T20:54:40.967Z"}
+{"level":"info","message":"New client connected","timestamp":"2025-06-02T20:55:48.251Z"}
+{"level":"info","message":"Client disconnected","timestamp":"2025-06-02T20:55:53.500Z"}
+{"level":"info","message":"Server running on port 3001","timestamp":"2025-06-02T21:51:28.892Z"}
+{"level":"info","message":"Database type: sqlite","timestamp":"2025-06-02T21:51:28.892Z"}
+{"level":"info","message":"New client connected","timestamp":"2025-06-02T21:56:49.597Z"}
+{"level":"info","message":"Client disconnected","timestamp":"2025-06-02T21:56:51.932Z"}
+{"level":"info","message":"Server running on port 3001","timestamp":"2025-06-02T22:06:53.676Z"}
+{"level":"info","message":"Database type: sqlite","timestamp":"2025-06-02T22:06:53.676Z"}

@@ -1,0 +1,5 @@
+This directory will contain customer-facing images for the Baklovah restaurant website.
+
+In a production environment, these images would be stored in Amazon S3 as specified in the project requirements.
+
+For now, this is a placeholder to ensure the directory structure exists.

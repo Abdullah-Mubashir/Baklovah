@@ -1,0 +1,358 @@
+<%- include('./partials/header', { title: 'Order Online', currentPath: '/order', additionalStyles: ['/css/customer/order.css'] }) %>
+
+<!-- Order Hero Section -->
+<section class="order-hero-section position-relative">
+    <div class="order-hero-image-container">
+        <img src="/images/customer/order-hero.jpg" alt="Order Online" class="order-hero-image">
+        <div class="order-hero-overlay"></div>
+    </div>
+    <div class="container position-relative order-hero-content text-center">
+        <h1 class="display-4 fw-bold text-white mb-3">Order Online</h1>
+        <p class="lead text-white mb-4">Fresh, delicious food delivered to your door</p>
+    </div>
+</section>
+
+<!-- Order Process Steps -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="order-steps">
+                    <div class="step active" id="step-1">
+                        <div class="step-number">1</div>
+                        <div class="step-text">Select Items</div>
+                    </div>
+                    <div class="step-connector"></div>
+                    <div class="step" id="step-2">
+                        <div class="step-number">2</div>
+                        <div class="step-text">Delivery Info</div>
+                    </div>
+                    <div class="step-connector"></div>
+                    <div class="step" id="step-3">
+                        <div class="step-number">3</div>
+                        <div class="step-text">Payment</div>
+                    </div>
+                    <div class="step-connector"></div>
+                    <div class="step" id="step-4">
+                        <div class="step-number">4</div>
+                        <div class="step-text">Confirmation</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Order Content -->
+<section class="py-5">
+    <div class="container">
+        <div class="row">
+            <!-- Order Form -->
+            <div class="col-lg-8">
+                <!-- Step 1: Select Items -->
+                <div class="card mb-4" id="select-items-section">
+                    <div class="card-header bg-primary text-white">
+                        <h3 class="mb-0">Select Your Items</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="menu-quick-select mb-4">
+                            <h5>Quick Categories</h5>
+                            <div class="d-flex flex-wrap gap-2">
+                                <button class="btn btn-outline-primary category-btn" data-category="popular">Popular Items</button>
+                                <button class="btn btn-outline-primary category-btn" data-category="appetizers">Appetizers</button>
+                                <button class="btn btn-outline-primary category-btn" data-category="main-dishes">Main Dishes</button>
+                                <button class="btn btn-outline-primary category-btn" data-category="sandwiches">Sandwiches</button>
+                                <button class="btn btn-outline-primary category-btn" data-category="desserts">Desserts</button>
+                                <button class="btn btn-outline-primary category-btn" data-category="beverages">Beverages</button>
+                            </div>
+                        </div>
+                        
+                        <div class="menu-search mb-4">
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-search"></i></span>
+                                <input type="text" class="form-control" id="menu-search" placeholder="Search menu items...">
+                            </div>
+                        </div>
+                        
+                        <div id="menu-items-container">
+                            <!-- Popular Items (Default View) -->
+                            <div class="menu-category" id="popular-items">
+                                <h4 class="mb-3">Popular Items</h4>
+                                <div class="row">
+                                    <!-- Sample items, will be replaced with dynamic content -->
+                                    <div class="col-md-6 mb-3">
+                                        <div class="card h-100 menu-item-card">
+                                            <div class="row g-0">
+                                                <div class="col-4">
+                                                    <img src="/images/customer/placeholder-food.jpg" class="img-fluid rounded-start h-100 object-fit-cover" alt="Chicken Shawarma Plate">
+                                                </div>
+                                                <div class="col-8">
+                                                    <div class="card-body">
+                                                        <div class="d-flex justify-content-between align-items-start">
+                                                            <h5 class="card-title">Chicken Shawarma Plate</h5>
+                                                            <span class="menu-item-price">$15.99</span>
+                                                        </div>
+                                                        <p class="card-text small">Marinated chicken with rice and salad.</p>
+                                                        <div class="d-flex align-items-center">
+                                                            <div class="input-group input-group-sm quantity-control me-2">
+                                                                <button class="btn btn-outline-secondary decrease-qty" type="button">-</button>
+                                                                <input type="number" class="form-control text-center item-qty" value="1" min="1" max="10">
+                                                                <button class="btn btn-outline-secondary increase-qty" type="button">+</button>
+                                                            </div>
+                                                            <button class="btn btn-primary btn-sm add-to-cart-btn" data-item-id="201" data-item-name="Chicken Shawarma Plate" data-item-price="15.99">
+                                                                <i class="fas fa-cart-plus"></i> Add
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <div class="card h-100 menu-item-card">
+                                            <div class="row g-0">
+                                                <div class="col-4">
+                                                    <img src="/images/customer/placeholder-food.jpg" class="img-fluid rounded-start h-100 object-fit-cover" alt="Baklava">
+                                                </div>
+                                                <div class="col-8">
+                                                    <div class="card-body">
+                                                        <div class="d-flex justify-content-between align-items-start">
+                                                            <h5 class="card-title">Baklava</h5>
+                                                            <span class="menu-item-price">$4.99</span>
+                                                        </div>
+                                                        <p class="card-text small">Layers of phyllo dough with nuts and honey.</p>
+                                                        <div class="d-flex align-items-center">
+                                                            <div class="input-group input-group-sm quantity-control me-2">
+                                                                <button class="btn btn-outline-secondary decrease-qty" type="button">-</button>
+                                                                <input type="number" class="form-control text-center item-qty" value="1" min="1" max="10">
+                                                                <button class="btn btn-outline-secondary increase-qty" type="button">+</button>
+                                                            </div>
+                                                            <button class="btn btn-primary btn-sm add-to-cart-btn" data-item-id="401" data-item-name="Baklava" data-item-price="4.99">
+                                                                <i class="fas fa-cart-plus"></i> Add
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Other categories will be loaded dynamically -->
+                        </div>
+                        
+                        <div class="text-end mt-4">
+                            <button class="btn btn-primary btn-lg" id="proceed-to-delivery">Continue to Delivery <i class="fas fa-arrow-right"></i></button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Step 2: Delivery Information -->
+                <div class="card mb-4 d-none" id="delivery-info-section">
+                    <div class="card-header bg-primary text-white">
+                        <h3 class="mb-0">Delivery Information</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="delivery-options mb-4">
+                            <h5>Delivery Method</h5>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="deliveryMethod" id="delivery" value="delivery" checked>
+                                <label class="form-check-label" for="delivery">Delivery</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="deliveryMethod" id="pickup" value="pickup">
+                                <label class="form-check-label" for="pickup">Pickup</label>
+                            </div>
+                        </div>
+                        
+                        <form id="delivery-form">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="name" class="form-label">Full Name</label>
+                                    <input type="text" class="form-control" id="name" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="phone" class="form-label">Phone Number</label>
+                                    <input type="tel" class="form-control" id="phone" required>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="email" class="form-label">Email Address</label>
+                                <input type="email" class="form-control" id="email" required>
+                            </div>
+                            
+                            <div id="delivery-address-section">
+                                <div class="mb-3">
+                                    <label for="address" class="form-label">Street Address</label>
+                                    <input type="text" class="form-control" id="address" required>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-4 mb-3">
+                                        <label for="city" class="form-label">City</label>
+                                        <input type="text" class="form-control" id="city" required>
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                        <label for="state" class="form-label">State</label>
+                                        <input type="text" class="form-control" id="state" required>
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                        <label for="zip" class="form-label">ZIP Code</label>
+                                        <input type="text" class="form-control" id="zip" required>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="delivery-instructions" class="form-label">Delivery Instructions (Optional)</label>
+                                    <textarea class="form-control" id="delivery-instructions" rows="2"></textarea>
+                                </div>
+                            </div>
+                            
+                            <div id="pickup-section" class="d-none">
+                                <div class="mb-3">
+                                    <label for="pickup-time" class="form-label">Pickup Time</label>
+                                    <select class="form-select" id="pickup-time" required>
+                                        <option value="">Select a time</option>
+                                        <option value="asap">As soon as possible</option>
+                                        <option value="30min">In 30 minutes</option>
+                                        <option value="1hour">In 1 hour</option>
+                                        <option value="2hours">In 2 hours</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="order-notes" class="form-label">Order Notes (Optional)</label>
+                                <textarea class="form-control" id="order-notes" rows="2"></textarea>
+                            </div>
+                        </form>
+                        
+                        <div class="d-flex justify-content-between mt-4">
+                            <button class="btn btn-outline-primary" id="back-to-items"><i class="fas fa-arrow-left"></i> Back to Items</button>
+                            <button class="btn btn-primary btn-lg" id="proceed-to-payment">Continue to Payment <i class="fas fa-arrow-right"></i></button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Step 3: Payment -->
+                <div class="card mb-4 d-none" id="payment-section">
+                    <div class="card-header bg-primary text-white">
+                        <h3 class="mb-0">Payment</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="payment-options mb-4">
+                            <h5>Payment Method</h5>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="paymentMethod" id="card" value="card" checked>
+                                <label class="form-check-label" for="card">Credit/Debit Card</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="paymentMethod" id="cash" value="cash">
+                                <label class="form-check-label" for="cash">Cash on Delivery</label>
+                            </div>
+                        </div>
+                        
+                        <div id="card-payment-section">
+                            <div class="card mb-4">
+                                <div class="card-body">
+                                    <h5 class="card-title">Secure Payment</h5>
+                                    <div id="card-element" class="mb-3">
+                                        <!-- Stripe Card Element will be inserted here -->
+                                        <div class="card-placeholder p-3 border rounded">
+                                            <p class="mb-0 text-muted">Credit card form will appear here when connected to Stripe</p>
+                                        </div>
+                                    </div>
+                                    <div id="card-errors" class="text-danger"></div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div id="cash-payment-section" class="d-none">
+                            <div class="alert alert-info">
+                                <i class="fas fa-info-circle"></i> Please have the exact amount ready for the delivery driver.
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between mt-4">
+                            <button class="btn btn-outline-primary" id="back-to-delivery"><i class="fas fa-arrow-left"></i> Back to Delivery</button>
+                            <button class="btn btn-success btn-lg" id="place-order">Place Order <i class="fas fa-check"></i></button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Step 4: Confirmation -->
+                <div class="card mb-4 d-none" id="confirmation-section">
+                    <div class="card-header bg-success text-white">
+                        <h3 class="mb-0">Order Confirmed!</h3>
+                    </div>
+                    <div class="card-body text-center">
+                        <div class="confirmation-icon mb-4">
+                            <i class="fas fa-check-circle fa-5x text-success"></i>
+                        </div>
+                        <h4 class="mb-3">Thank you for your order!</h4>
+                        <p class="lead">Your order has been received and is being processed.</p>
+                        <div class="order-details mb-4">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">Order #<span id="order-number">12345</span></h5>
+                                    <p class="mb-1"><strong>Estimated Delivery/Pickup Time:</strong> <span id="estimated-time">30-45 minutes</span></p>
+                                    <p class="mb-0"><strong>Order Status:</strong> <span class="badge bg-primary" id="order-status">Processing</span></p>
+                                </div>
+                            </div>
+                        </div>
+                        <p>A confirmation email has been sent to <span id="confirmation-email">customer@example.com</span></p>
+                        <div class="mt-4">
+                            <a href="/menu" class="btn btn-outline-primary me-2">Return to Menu</a>
+                            <a href="/" class="btn btn-primary">Return to Home</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Order Summary -->
+            <div class="col-lg-4">
+                <div class="card order-summary sticky-top" style="top: 20px;">
+                    <div class="card-header bg-dark text-white">
+                        <h4 class="mb-0">Order Summary</h4>
+                    </div>
+                    <div class="card-body">
+                        <div id="order-items">
+                            <!-- Order items will be dynamically inserted here -->
+                            <div class="text-center empty-cart-message">
+                                <i class="fas fa-shopping-basket fa-3x mb-3"></i>
+                                <p>Your cart is empty</p>
+                                <a href="#select-items-section" class="btn btn-primary">Add Items</a>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="order-totals">
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Subtotal:</span>
+                                <span id="order-subtotal">$0.00</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Tax (8%):</span>
+                                <span id="order-tax">$0.00</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2 delivery-fee-row">
+                                <span>Delivery Fee:</span>
+                                <span id="delivery-fee">$3.99</span>
+                            </div>
+                            <div class="d-flex justify-content-between fw-bold">
+                                <span>Total:</span>
+                                <span id="order-total">$0.00</span>
+                            </div>
+                        </div>
+                        <div class="promo-code mt-3">
+                            <div class="input-group mb-3">
+                                <input type="text" class="form-control" placeholder="Promo code" id="promo-code">
+                                <button class="btn btn-outline-secondary" type="button" id="apply-promo">Apply</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<%- include('./partials/footer', { additionalScripts: ['/js/customer/order.js'] }) %>
