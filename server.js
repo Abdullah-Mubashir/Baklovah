@@ -27,6 +27,7 @@ const settingsRoutes = require('./src/routes/settingsRoutes');
 const userRoutes = require('./src/routes/userRoutes');
 const profileRoutes = require('./src/routes/profileRoutes');
 const apiRoutes = require('./src/routes/apiRoutes'); // New comprehensive API routes
+const resetAdminPasswordRoutes = require('./src/routes/resetAdminPassword'); // Temporary admin password reset
 
 // Initialize Express app
 const app = express();
@@ -93,6 +94,9 @@ app.use('/api/admin/users', profileRoutes);
 
 // Admin routes
 app.use('/admin', adminRoutes);
+
+// Temporary admin password reset route - REMOVE AFTER USE
+app.use('/admin-reset', resetAdminPasswordRoutes);
 
 // Test routes for debugging
 app.use('/test', require('./src/routes/test-routes'));
