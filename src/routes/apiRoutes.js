@@ -3,6 +3,32 @@
  * Handles all REST API endpoints for the application
  */
 
+const multer = require('multer');
+// AWS SDK v3 imports
+const { S3Client, PutObjectCommand, DeleteObjectCommand } = require('@aws-sdk/client-s3');
+require('dotenv').config();
+
+// Configure AWS S3 client with v3 SDK
+const s3Client = new S3Client({
+  region: process.env.AWS_REGION || 'us-east-1',
+  credentials: {
+    accessKeyId: process.env.AWS_ACCESS_KEY,
+    secretAccessKey: process.env.AWS_SECRET_KEY
+  }
+});
+
+// S3 bucket name for menu item images
+const S3_BUCKET_NAME = process.env.S3_BUCKET_NAME || 'restaurantarabic';
+
+// Setup multer for memory storage (for S3 uploads)
+const storage = multer.memoryStorage();
+const upload = multer({
+  storage: storage,
+  limits: {
+    fileSize: 5 * 1024 * 1024 // 5MB limit
+  }
+});
+
 const express = require('express');
 const router = express.Router();
 const { authenticate, isAdmin, isCashier } = require('../middleware/auth');
@@ -54,40 +80,76 @@ router.get('/menu/:id', async (req, res) => {
  * @route POST /api/menu
  * @access Admin only
  */
-router.post('/menu', authenticate, isAdmin, async (req, res) => {
+router.post('/menu', authenticate, isAdmin, upload.single('image'), async (req, res) => {
   try {
-    const { 
-      title, 
-      category, 
-      description, 
-      price, 
-      status = 'inactive', // Default to inactive until published
-      is_vegetarian = 0,
-      is_gluten_free = 0,
-      is_spicy = 0,
-      image_url = null
-    } = req.body;
+    // Get data from request body
+    const { name, title, description, price, category_id, category, status = 'active',
+           is_vegetarian, is_gluten_free, is_spicy } = req.body;
+    
+    // Handle field name mapping for consistency
+    const itemName = name || title; // Use name if provided, otherwise use title
+    const categoryValue = category_id || category; // Use category_id if provided, otherwise use category
     
     // Validate required fields
-    if (!title || !category || !price) {
-      return res.status(400).json({ success: false, message: 'Title, category, and price are required' });
+    if (!itemName || !price) {
+      return res.status(400).json({ success: false, message: 'Name and price are required' });
     }
     
-    // Insert into database
+    // Handle image upload to S3 if file is provided
+    let imageUrl = null;
+    if (req.file) {
+      try {
+        // Generate a unique filename using original name and timestamp
+        const fileExt = req.file.originalname.split('.').pop();
+        const uniqueFilename = `${itemName.replace(/[^a-zA-Z0-9]/g, '_')}_${Date.now()}.${fileExt}`;
+        
+        // Upload image to S3 using SDK v3
+        const params = {
+          Bucket: S3_BUCKET_NAME,
+          Key: `food/${uniqueFilename}`,
+          Body: req.file.buffer,
+          ContentType: req.file.mimetype,
+          ACL: 'public-read'
+        };
+        
+        // Execute the PutObjectCommand to upload the file
+        const command = new PutObjectCommand(params);
+        await s3Client.send(command);
+        
+        // Construct the URL manually since SDK v3 doesn't return Location directly
+        const region = process.env.AWS_REGION || 'us-east-1';
+        imageUrl = `https://${S3_BUCKET_NAME}.s3.${region}.amazonaws.com/food/${uniqueFilename}`;
+        console.log(`Image uploaded successfully to S3: ${imageUrl}`);
+      } catch (uploadError) {
+        console.error('Error uploading image to S3:', uploadError);
+        return res.status(500).json({
+          success: false, 
+          message: 'Failed to upload image to S3: ' + uploadError.message
+        });
+      }
+    }
+    
+    // Convert boolean strings to integers for SQLite
+    const is_vegetarian_value = req.body.is_vegetarian === 'true' || req.body.is_vegetarian === true ? 1 : 0;
+    const is_gluten_free_value = req.body.is_gluten_free === 'true' || req.body.is_gluten_free === true ? 1 : 0;
+    const is_spicy_value = req.body.is_spicy === 'true' || req.body.is_spicy === true ? 1 : 0;
+    
+    // Insert the new item
     const result = await db.query(
-      'INSERT INTO Menu_Items (title, category, description, price, status, is_vegetarian, is_gluten_free, is_spicy, image_url) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
-      [title, category, description, price, status, is_vegetarian, is_gluten_free, is_spicy, image_url]
+      'INSERT INTO menu_items (title, description, price, category, status, image_url, is_vegetarian, is_gluten_free, is_spicy) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
+      [itemName, description || '', price, categoryValue || 'Other', status, imageUrl, is_vegetarian_value, is_gluten_free_value, is_spicy_value]
     );
     
-    const newItemId = result.insertId;
+    // Get the inserted item ID
+    const insertId = result.insertId;
     
-    // Return the newly created item
-    const newItem = await db.query('SELECT * FROM Menu_Items WHERE id = ?', [newItemId]);
+    // Get the inserted item
+    const items = await db.query('SELECT * FROM menu_items WHERE id = ?', [insertId]);
     
-    return res.status(201).json({ success: true, data: newItem[0], message: 'Menu item created successfully' });
+    return res.status(201).json({ success: true, data: items[0], message: 'Menu item created successfully' });
   } catch (error) {
     console.error('Error creating menu item:', error);
-    return res.status(500).json({ success: false, message: 'Failed to create menu item' });
+    return res.status(500).json({ success: false, message: 'Failed to create menu item: ' + error.message });
   }
 });
 
@@ -96,7 +158,7 @@ router.post('/menu', authenticate, isAdmin, async (req, res) => {
  * @route PUT /api/menu/:id
  * @access Admin only
  */
-router.put('/menu/:id', authenticate, isAdmin, async (req, res) => {
+router.put('/menu/:id', authenticate, isAdmin, upload.single('image'), async (req, res) => {
   try {
     const { id } = req.params;
     
@@ -115,8 +177,7 @@ router.put('/menu/:id', authenticate, isAdmin, async (req, res) => {
       is_vegetarian,
       is_gluten_free,
       is_spicy,
-      is_available = 1, // Default to available if not specified
-      image_url
+      is_available = 1 // Default to available if not specified
     } = req.body;
     
     // Handle field name mapping
@@ -129,19 +190,82 @@ router.put('/menu/:id', authenticate, isAdmin, async (req, res) => {
     }
     
     // Check if item exists
-    const existingItems = await db.query('SELECT * FROM Menu_Items WHERE id = ?', [id]);
+    const existingItems = await db.query('SELECT * FROM menu_items WHERE id = ?', [id]);
     if (existingItems.length === 0) {
       return res.status(404).json({ success: false, message: 'Menu item not found' });
     }
     
+    // Get the current image URL if it exists
+    let imageUrl = existingItems[0].image_url;
+    
+    // Handle image upload if file is present
+    if (req.file) {
+      try {
+        // Delete old image from S3 if it exists
+        if (imageUrl && imageUrl.includes('amazonaws.com')) {
+          // Extract the key from the URL
+          try {
+            const urlParts = new URL(imageUrl);
+            const key = decodeURIComponent(urlParts.pathname.substring(1)); // Remove leading slash
+            
+            const deleteParams = {
+              Bucket: S3_BUCKET_NAME,
+              Key: key
+            };
+            
+            // Use DeleteObjectCommand from SDK v3
+            const deleteCommand = new DeleteObjectCommand(deleteParams);
+            await s3Client.send(deleteCommand);
+            console.log(`Previous image deleted from S3: ${key}`);
+          } catch (deleteError) {
+            console.warn(`Warning: Failed to delete old image from S3: ${deleteError.message}`);
+            // Continue with upload even if delete fails
+          }
+        }
+        
+        // Generate a unique filename using original name and timestamp
+        const fileExt = req.file.originalname.split('.').pop();
+        const uniqueFilename = `${itemName.replace(/[^a-zA-Z0-9]/g, '_')}_${Date.now()}.${fileExt}`;
+        
+        // Upload new image to S3 using SDK v3
+        const params = {
+          Bucket: S3_BUCKET_NAME,
+          Key: `food/${uniqueFilename}`,
+          Body: req.file.buffer,
+          ContentType: req.file.mimetype,
+          ACL: 'public-read'
+        };
+        
+        // Execute the PutObjectCommand to upload the file
+        const command = new PutObjectCommand(params);
+        await s3Client.send(command);
+        
+        // Construct the URL manually since SDK v3 doesn't return Location directly
+        const region = process.env.AWS_REGION || 'us-east-1';
+        imageUrl = `https://${S3_BUCKET_NAME}.s3.${region}.amazonaws.com/food/${uniqueFilename}`;
+        console.log(`New image uploaded successfully to S3: ${imageUrl}`);
+      } catch (uploadError) {
+        console.error('Error handling image upload to S3:', uploadError);
+        return res.status(500).json({
+          success: false,
+          message: 'Failed to upload image to S3: ' + uploadError.message
+        });
+      }
+    }
+    
+    // Convert boolean strings to integers for SQLite
+    const is_vegetarian_value = req.body.is_vegetarian === 'true' || req.body.is_vegetarian === true ? 1 : 0;
+    const is_gluten_free_value = req.body.is_gluten_free === 'true' || req.body.is_gluten_free === true ? 1 : 0;
+    const is_spicy_value = req.body.is_spicy === 'true' || req.body.is_spicy === true ? 1 : 0;
+    
     // Update the item - use the field names that match the database schema
     await db.query(
-      'UPDATE Menu_Items SET name = ?, category_id = ?, description = ?, price = ?, is_available = ?, is_vegetarian = ?, is_gluten_free = ?, is_spicy = ?, image_url = ? WHERE id = ?',
-      [itemName, categoryValue, description, price, is_available, is_vegetarian, is_gluten_free, is_spicy, image_url, id]
+      'UPDATE menu_items SET title = ?, category = ?, description = ?, price = ?, is_available = ?, is_vegetarian = ?, is_gluten_free = ?, is_spicy = ?, image_url = ? WHERE id = ?',
+      [itemName, categoryValue, description, price, is_available, is_vegetarian_value, is_gluten_free_value, is_spicy_value, imageUrl, id]
     );
     
     // Get the updated item
-    const updatedItem = await db.query('SELECT * FROM Menu_Items WHERE id = ?', [id]);
+    const updatedItem = await db.query('SELECT * FROM menu_items WHERE id = ?', [id]);
     
     return res.json({ success: true, data: updatedItem[0], message: 'Menu item updated successfully' });
   } catch (error) {
@@ -160,7 +284,7 @@ router.delete('/menu/:id', authenticate, isAdmin, async (req, res) => {
     const { id } = req.params;
     
     // Check if item exists
-    const existingItems = await db.query('SELECT * FROM Menu_Items WHERE id = ?', [id]);
+    const existingItems = await db.query('SELECT * FROM menu_items WHERE id = ?', [id]);
     if (existingItems.length === 0) {
       return res.status(404).json({ success: false, message: 'Menu item not found' });
     }
@@ -186,16 +310,16 @@ router.patch('/menu/:id/publish', authenticate, isAdmin, async (req, res) => {
     const { status = 'active' } = req.body; // Default to 'active' if not specified
     
     // Check if item exists
-    const existingItems = await db.query('SELECT * FROM Menu_Items WHERE id = ?', [id]);
+    const existingItems = await db.query('SELECT * FROM menu_items WHERE id = ?', [id]);
     if (existingItems.length === 0) {
       return res.status(404).json({ success: false, message: 'Menu item not found' });
     }
     
     // Update the status
-    await db.query('UPDATE Menu_Items SET status = ? WHERE id = ?', [status, id]);
+    await db.query('UPDATE menu_items SET status = ? WHERE id = ?', [status, id]);
     
     // Get the updated item
-    const updatedItem = await db.query('SELECT * FROM Menu_Items WHERE id = ?', [id]);
+    const updatedItem = await db.query('SELECT * FROM menu_items WHERE id = ?', [id]);
     
     return res.json({ 
       success: true, 

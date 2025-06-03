@@ -420,6 +420,17 @@
     // Add a new menu item
     async function addMenuItem(formData) {
         try {
+            // Check if an image is being uploaded and show loading indicator
+            const imageFile = formData.get('image');
+            const hasImageUpload = imageFile && imageFile.name && imageFile.size > 0;
+            
+            if (hasImageUpload) {
+                const uploadBtn = document.querySelector('#addItemModal .btn-primary');
+                const originalBtnText = uploadBtn.innerHTML;
+                uploadBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status"></span> Uploading image to S3...';
+                uploadBtn.disabled = true;
+            }
+            
             const response = await callApi('/api/menu', 'POST', formData);
             
             // Close modal
@@ -432,18 +443,41 @@
             // Reload menu items
             await loadMenuItems();
             
-            // Show success message
-            alert('Menu item added successfully!');
+            // Show success message with image upload details
+            if (hasImageUpload && response.data && response.data.image_url) {
+                alert(`Menu item added successfully! Image uploaded to S3.`);
+            } else {
+                alert('Menu item added successfully!');
+            }
             
         } catch (error) {
             console.error('Error adding menu item:', error);
             alert(`Error adding menu item: ${error.message}`);
+            
+            // Reset the button in case of error
+            const uploadBtn = document.querySelector('#addItemModal .btn-primary');
+            if (uploadBtn) {
+                uploadBtn.innerHTML = 'Add Item';
+                uploadBtn.disabled = false;
+            }
         }
     }
     
     // Update an existing menu item
     async function updateMenuItem(itemId, formData) {
         try {
+            // Check if an image is being uploaded and show loading indicator
+            const imageFile = formData.get('image');
+            const hasImageUpload = imageFile && imageFile.name && imageFile.size > 0;
+            
+            if (hasImageUpload) {
+                const uploadBtn = document.querySelector('#editItemModal .btn-primary');
+                const originalBtnText = uploadBtn.innerHTML;
+                uploadBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status"></span> Uploading image to S3...';
+                uploadBtn.disabled = true;
+            }
+            
+            // Call the API with the form data including the image if present
             const response = await callApi(`/api/menu/${itemId}`, 'PUT', formData);
             
             // Close modal
@@ -453,12 +487,23 @@
             // Reload menu items
             await loadMenuItems();
             
-            // Show success message
-            alert('Menu item updated successfully!');
+            // Show success message with image upload details
+            if (hasImageUpload && response.data && response.data.image_url) {
+                alert(`Menu item updated successfully! Image uploaded to S3.`);
+            } else {
+                alert('Menu item updated successfully!');
+            }
             
         } catch (error) {
             console.error('Error updating menu item:', error);
             alert(`Error updating menu item: ${error.message}`);
+            
+            // Reset the button in case of error
+            const uploadBtn = document.querySelector('#editItemModal .btn-primary');
+            if (uploadBtn) {
+                uploadBtn.innerHTML = 'Save Changes';
+                uploadBtn.disabled = false;
+            }
         }
     }
     
