@@ -6,14 +6,17 @@
 
 const MenuItem = require('../models/menuItem');
 const Analytics = require('../models/analytics');
-const AWS = require('aws-sdk');
+// AWS SDK v3 imports
+const { S3Client, PutObjectCommand, DeleteObjectCommand } = require('@aws-sdk/client-s3');
 require('dotenv').config();
 
-// Configure AWS S3
-const s3 = new AWS.S3({
-  accessKeyId: process.env.AWS_ACCESS_KEY,
-  secretAccessKey: process.env.AWS_SECRET_KEY,
-  region: process.env.AWS_REGION || 'us-east-1'
+// Configure AWS S3 client with v3 SDK
+const s3Client = new S3Client({
+  region: process.env.AWS_REGION || 'us-east-1',
+  credentials: {
+    accessKeyId: process.env.AWS_ACCESS_KEY,
+    secretAccessKey: process.env.AWS_SECRET_KEY
+  }
 });
 
 // S3 bucket name for menu item images
@@ -108,20 +111,27 @@ async function createMenuItem(req, res) {
     // Handle image upload if file is present
     if (req.file) {
       try {
-        // Use the original filename as the S3 key
-        const fileName = req.file.originalname;
+        // Generate a unique filename with timestamp to prevent overwriting
+        const fileExt = req.file.originalname.split('.').pop();
+        const uniqueFilename = `${title.replace(/[^a-zA-Z0-9]/g, '_')}_${Date.now()}.${fileExt}`;
         
-        // Upload file to S3
+        // Upload file to S3 using SDK v3
         const params = {
           Bucket: S3_BUCKET_NAME,
-          Key: `food/${fileName}`,
+          Key: `food/${uniqueFilename}`,
           Body: req.file.buffer,
           ContentType: req.file.mimetype,
           ACL: 'public-read'
         };
         
-        const uploadResult = await s3.upload(params).promise();
-        imageUrl = uploadResult.Location;
+        // Execute the PutObjectCommand to upload the file
+        const command = new PutObjectCommand(params);
+        const response = await s3Client.send(command);
+        
+        // Construct the URL manually since SDK v3 doesn't return Location directly
+        const region = process.env.AWS_REGION || 'us-east-1';
+        imageUrl = `https://${S3_BUCKET_NAME}.s3.${region}.amazonaws.com/food/${uniqueFilename}`;
+        
         console.log(`Image uploaded successfully to S3: ${imageUrl}`);
       } catch (uploadError) {
         console.error('Error uploading image to S3:', uploadError);
@@ -185,25 +195,30 @@ async function updateMenuItem(req, res) {
         if (imageUrl) {
           // Extract the key from the URL or filename from path
           let oldKey = '';
+          let fullPath = '';
           
           if (imageUrl.includes('s3.amazonaws.com')) {
             // Parse S3 URL to get the key
             const urlParts = new URL(imageUrl);
+            fullPath = urlParts.pathname.substring(1); // Remove leading slash
             oldKey = urlParts.pathname.split('/').pop();
           } else {
             // Just get the filename
             oldKey = imageUrl.split('/').pop();
+            fullPath = `food/${oldKey}`;
           }
           
-          if (oldKey) {
+          if (fullPath) {
             const deleteParams = {
               Bucket: S3_BUCKET_NAME,
-              Key: `food/${oldKey}`
+              Key: fullPath
             };
             
             try {
-              await s3.deleteObject(deleteParams).promise();
-              console.log(`Previous image deleted from S3: ${oldKey}`);
+              // Use DeleteObjectCommand from SDK v3
+              const deleteCommand = new DeleteObjectCommand(deleteParams);
+              await s3Client.send(deleteCommand);
+              console.log(`Previous image deleted from S3: ${fullPath}`);
             } catch (deleteError) {
               console.warn(`Warning: Failed to delete old image from S3: ${deleteError.message}`);
               // Continue with upload even if delete fails
@@ -211,20 +226,27 @@ async function updateMenuItem(req, res) {
           }
         }
         
-        // Use the original filename as the S3 key
-        const fileName = req.file.originalname;
+        // Generate a unique filename with timestamp to prevent overwriting
+        const fileExt = req.file.originalname.split('.').pop();
+        const uniqueFilename = `${title.replace(/[^a-zA-Z0-9]/g, '_')}_${Date.now()}.${fileExt}`;
         
-        // Upload new image to S3
+        // Upload new image to S3 using SDK v3
         const params = {
           Bucket: S3_BUCKET_NAME,
-          Key: `food/${fileName}`,
+          Key: `food/${uniqueFilename}`,
           Body: req.file.buffer,
           ContentType: req.file.mimetype,
           ACL: 'public-read'
         };
         
-        const uploadResult = await s3.upload(params).promise();
-        imageUrl = uploadResult.Location;
+        // Execute the PutObjectCommand to upload the file
+        const command = new PutObjectCommand(params);
+        await s3Client.send(command);
+        
+        // Construct the URL manually since SDK v3 doesn't return Location directly
+        const region = process.env.AWS_REGION || 'us-east-1';
+        imageUrl = `https://${S3_BUCKET_NAME}.s3.${region}.amazonaws.com/food/${uniqueFilename}`;
+        
         console.log(`New image uploaded successfully to S3: ${imageUrl}`);
       } catch (uploadError) {
         console.error('Error handling image upload to S3:', uploadError);
@@ -282,14 +304,25 @@ async function deleteMenuItem(req, res) {
     }
     
     // Delete image from S3 if it exists
-    if (menuItem.image_url) {
-      const key = menuItem.image_url.split('/').pop();
-      const deleteParams = {
-        Bucket: process.env.S3_BUCKET_NAME,
-        Key: `menu-items/${key}`
-      };
-      
-      await s3.deleteObject(deleteParams).promise();
+    if (menuItem.image_url && menuItem.image_url.includes('s3.amazonaws.com')) {
+      try {
+        // Parse S3 URL to get the key
+        const urlParts = new URL(menuItem.image_url);
+        const fullPath = urlParts.pathname.substring(1); // Remove leading slash
+        
+        const deleteParams = {
+          Bucket: S3_BUCKET_NAME,
+          Key: fullPath
+        };
+        
+        // Use DeleteObjectCommand from SDK v3
+        const deleteCommand = new DeleteObjectCommand(deleteParams);
+        await s3Client.send(deleteCommand);
+        console.log(`Menu item image deleted from S3: ${fullPath}`);
+      } catch (deleteError) {
+        console.warn(`Warning: Failed to delete image from S3: ${deleteError.message}`);
+        // Continue with item deletion even if image deletion fails
+      }
     }
     
     // Delete menu item from database using model
