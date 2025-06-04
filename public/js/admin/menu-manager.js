@@ -700,24 +700,30 @@ async function updateMenuItem() {
     // Convert form data to JSON object with proper type handling
     const menuItem = {};
     formData.forEach((value, key) => {
-      // Use the same field names as the server expects
-      const dbFieldName = key;
-      
       if (key === 'is_vegetarian' || key === 'is_gluten_free' || key === 'is_spicy') {
         // Convert checkbox values to integers for MySQL
-        menuItem[dbFieldName] = value === 'on' ? 1 : 0;
+        menuItem[key] = value === 'on' ? 1 : 0;
       } else if (key === 'price') {
         // Ensure price is a valid number
-        menuItem[dbFieldName] = parseFloat(value) || 0;
+        menuItem[key] = parseFloat(value) || 0;
       } else if (key === 'status') {
         // Ensure status is properly set
-        menuItem[dbFieldName] = value || 'inactive';
+        menuItem[key] = value || 'inactive';
       } else if (key === 'category') {
-        // Handle category (might need to be category_id in database)
-        menuItem['category_id'] = parseInt(value) || null;
+        // Backend expects 'category' to match database field name
+        menuItem.category = value;
+        
+        // Also provide 'category_id' for compatibility
+        if (parseInt(value)) {
+          menuItem.category_id = parseInt(value);
+        }
+      } else if (key === 'title') {
+        // Send both title and name to ensure compatibility
+        menuItem.title = value.trim();
+        menuItem.name = value.trim();
       } else if (key !== 'image' && key !== 'id') { // Handle image and id separately
         // Sanitize strings to prevent SQL injection
-        menuItem[dbFieldName] = typeof value === 'string' ? value.trim() : value;
+        menuItem[key] = typeof value === 'string' ? value.trim() : value;
       }
     });
     
