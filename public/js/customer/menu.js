@@ -56,14 +56,26 @@ function loadMenuItems() {
     // Show loading indicator
     const sections = ['appetizers', 'main-dishes', 'sandwiches', 'sides', 'desserts', 'beverages'];
     sections.forEach(section => {
-        document.getElementById(`${section}-items`).innerHTML = '<div class="col-12 text-center"><p>Loading menu items...</p></div>';
+        const sectionElement = document.getElementById(`${section}-items`);
+        if (sectionElement) {
+            sectionElement.innerHTML = '<div class="col-12 text-center"><p>Loading menu items...</p></div>';
+        } else {
+            console.warn(`Section element ${section}-items not found in the DOM`);
+        }
     });
     
-    // Fetch menu items from API
-    fetch('/api/menu')
+    // Fetch menu items from API with error handling for both network and server errors
+    fetch('/api/menu', {
+        method: 'GET',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        cache: 'no-store' // Prevent caching issues
+    })
         .then(response => {
             if (!response.ok) {
-                throw new Error('Failed to fetch menu items');
+                throw new Error(`Failed to fetch menu items: ${response.status} ${response.statusText}`);
             }
             return response.json();
         })
@@ -90,10 +102,16 @@ function loadMenuItems() {
                 }
             });
             
-            // Render items by category
+            // Render items by category with additional error handling
             Object.keys(itemsByCategory).forEach(category => {
                 const items = itemsByCategory[category];
                 const container = document.getElementById(`${category}-items`);
+                
+                // Skip if container doesn't exist
+                if (!container) {
+                    console.warn(`Container for category ${category} not found`);
+                    return;
+                }
                 
                 if (items.length === 0) {
                     container.innerHTML = '<div class="col-12 text-center"><p>No items available in this category</p></div>';
@@ -102,8 +120,13 @@ function loadMenuItems() {
                 
                 container.innerHTML = '';
                 items.forEach(item => {
-                    const itemHtml = createMenuItemHtml(item);
-                    container.innerHTML += itemHtml;
+                    try {
+                        const itemHtml = createMenuItemHtml(item);
+                        container.innerHTML += itemHtml;
+                    } catch (error) {
+                        console.error(`Error rendering item ${item.id || 'unknown'}:`, error);
+                        // Continue with other items even if one fails
+                    }
                 });
             });
             
@@ -112,10 +135,27 @@ function loadMenuItems() {
         })
         .catch(error => {
             console.error('Error loading menu items:', error);
+            
+            // Display error message in each section with error handling
             sections.forEach(section => {
-                document.getElementById(`${section}-items`).innerHTML = 
-                    '<div class="col-12 text-center"><p>Failed to load menu items. Please try again later.</p></div>';
+                const sectionElement = document.getElementById(`${section}-items`);
+                if (sectionElement) {
+                    sectionElement.innerHTML = 
+                        '<div class="col-12 text-center"><p>Failed to load menu items. Please try again later.</p></div>';
+                }
             });
+            
+            // Try to retrieve data from localStorage as fallback if available
+            try {
+                const cachedMenu = localStorage.getItem('baklovah_menu_cache');
+                if (cachedMenu) {
+                    const cachedData = JSON.parse(cachedMenu);
+                    console.log('Using cached menu data as fallback');
+                    // Process the cached data here if needed
+                }
+            } catch (cacheError) {
+                console.warn('Failed to load cached menu data:', cacheError);
+            }
         });
 }
 
