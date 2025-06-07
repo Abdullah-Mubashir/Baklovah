@@ -232,8 +232,7 @@ router.put('/menu/:id', authenticate, isAdmin, upload.single('image'), async (re
           Bucket: S3_BUCKET_NAME,
           Key: `food/${uniqueFilename}`,
           Body: req.file.buffer,
-          ContentType: req.file.mimetype,
-          ACL: 'public-read'
+          ContentType: req.file.mimetype
         };
         
         // Execute the PutObjectCommand to upload the file
@@ -258,10 +257,18 @@ router.put('/menu/:id', authenticate, isAdmin, upload.single('image'), async (re
     const is_gluten_free_value = req.body.is_gluten_free === 'true' || req.body.is_gluten_free === true ? 1 : 0;
     const is_spicy_value = req.body.is_spicy === 'true' || req.body.is_spicy === true ? 1 : 0;
     
+    // Ensure price is converted to a number
+    const priceValue = parseFloat(price);
+    if (isNaN(priceValue)) {
+      console.error('Invalid price value:', price);
+      return res.status(400).json({ success: false, message: 'Price must be a valid number' });
+    }
+    console.log('Processing menu item update with converted price:', priceValue);
+    
     // Update the item - use the field names that match the database schema
     await db.query(
       'UPDATE menu_items SET title = ?, category = ?, description = ?, price = ?, is_available = ?, is_vegetarian = ?, is_gluten_free = ?, is_spicy = ?, image_url = ? WHERE id = ?',
-      [itemName, categoryValue, description, price, is_available, is_vegetarian_value, is_gluten_free_value, is_spicy_value, imageUrl, id]
+      [itemName, categoryValue, description, priceValue, is_available, is_vegetarian_value, is_gluten_free_value, is_spicy_value, imageUrl, id]
     );
     
     // Get the updated item
@@ -527,6 +534,121 @@ router.put('/site-settings', authenticate, isAdmin, async (req, res) => {
     await db.query('ROLLBACK');
     
     return res.status(500).json({ success: false, message: 'Failed to update site settings' });
+  }
+});
+
+// ======= Site Settings API Routes =======
+
+/**
+ * Get all site settings
+ * @route GET /api/site-settings
+ * @access Admin
+ */
+router.get('/site-settings', authenticate, isAdmin, async (req, res) => {
+  try {
+    // In a production app, this would fetch from database
+    // For now, returning default settings
+    const siteSettings = {
+      general: {
+        restaurantName: 'Baklovah Baklava & Cafe',
+        logoUrl: '/images/customer/logo.png',
+        tagline: 'Authentic Middle Eastern Sweets & Cuisine',
+        description: 'Family owned Middle Eastern restaurant serving authentic dishes with the finest ingredients.'
+      },
+      theme: {
+        primaryColor: '#8B5E34',
+        secondaryColor: '#6c757d',
+        accentColor: '#ffc107',
+        fontFamily: "'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif"
+      },
+      homepage: {
+        heroTitle: 'Welcome to Baklovah',
+        heroSubtitle: 'Authentic Middle Eastern Cuisine',
+        heroButtonText: 'Order Now',
+        heroButtonLink: '/menu',
+        heroImageUrl: '/images/customer/hero-bg.jpg',
+        featuredCategories: ['baklava', 'kunafa', 'coffee', 'desserts']
+      },
+      contact: {
+        phone: '(555) 123-4567',
+        email: 'contact@baklovahcafe.com',
+        address: '123 Middle Eastern St, San Francisco, CA 94123',
+        mapEmbedUrl: 'https://maps.google.com/maps?q=San%20Francisco&output=embed'
+      },
+      hours: {
+        monday: { open: '11:00', close: '21:00', closed: false },
+        tuesday: { open: '11:00', close: '21:00', closed: false },
+        wednesday: { open: '11:00', close: '21:00', closed: false },
+        thursday: { open: '11:00', close: '22:00', closed: false },
+        friday: { open: '11:00', close: '22:00', closed: false },
+        saturday: { open: '10:00', close: '22:00', closed: false },
+        sunday: { open: '10:00', close: '20:00', closed: false }
+      }
+    };
+    
+    return res.json({ success: true, data: siteSettings });
+  } catch (error) {
+    console.error('Error fetching site settings:', error);
+    return res.status(500).json({ success: false, message: 'Failed to fetch site settings' });
+  }
+});
+
+/**
+ * Update site settings
+ * @route PUT /api/site-settings
+ * @access Admin
+ */
+router.put('/site-settings', authenticate, isAdmin, upload.fields([
+  { name: 'restaurantLogo', maxCount: 1 },
+  { name: 'heroImage', maxCount: 1 }
+]), async (req, res) => {
+  try {
+    console.log('Update site settings request body:', req.body);
+    
+    // In a real application, you would save this to a database
+    // For this demo, we'll just return success with the data that would be saved
+    
+    // Handle file uploads if present
+    let logoUrl = null;
+    let heroImageUrl = null;
+    
+    if (req.files && req.files['restaurantLogo'] && req.files['restaurantLogo'][0]) {
+      // This would upload to S3 in production
+      console.log('Restaurant logo would be uploaded');
+      logoUrl = '/uploads/logo.png'; // Placeholder
+    }
+    
+    if (req.files && req.files['heroImage'] && req.files['heroImage'][0]) {
+      // This would upload to S3 in production
+      console.log('Hero image would be uploaded');
+      heroImageUrl = '/uploads/hero.jpg'; // Placeholder
+    }
+    
+    // Process and return the updated settings
+    const updatedSettings = {
+      general: JSON.parse(req.body.general || '{}'),
+      theme: JSON.parse(req.body.theme || '{}'),
+      homepage: JSON.parse(req.body.homepage || '{}'),
+      contact: JSON.parse(req.body.contact || '{}'),
+      hours: JSON.parse(req.body.hours || '{}')
+    };
+    
+    if (logoUrl) {
+      updatedSettings.general.logoUrl = logoUrl;
+    }
+    
+    if (heroImageUrl) {
+      updatedSettings.homepage.heroImageUrl = heroImageUrl;
+    }
+    
+    return res.json({
+      success: true,
+      data: updatedSettings,
+      message: 'Site settings updated successfully'
+    });
+  } catch (error) {
+    console.error('Error updating site settings:', error);
+    return res.status(500).json({ success: false, message: 'Failed to update site settings: ' + error.message });
   }
 });
 

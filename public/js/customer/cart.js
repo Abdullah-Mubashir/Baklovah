@@ -65,12 +65,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
 /**
  * Add an item to the cart
- * @param {string} itemId - Unique identifier for the item
- * @param {string} itemName - Name of the item
- * @param {number} itemPrice - Price of the item
- * @param {number} quantity - Quantity to add
+ * @param {string} itemId - ID of the item to add
+ * @param {string} itemName - Name of the item to add
+ * @param {string|number} itemPrice - Price of the item to add
+ * @param {number} quantity - Quantity of the item to add
  */
 function addToCart(itemId, itemName, itemPrice, quantity = 1) {
+    // Ensure itemPrice is a number
+    const price = parseFloat(itemPrice);
     // Find if item already exists in cart
     const existingItemIndex = cart.items.findIndex(item => item.id === itemId);
     
@@ -82,7 +84,7 @@ function addToCart(itemId, itemName, itemPrice, quantity = 1) {
         cart.items.push({
             id: itemId,
             name: itemName,
-            price: itemPrice,
+            price: price, // Use the parsed float price
             quantity: quantity
         });
     }
@@ -167,7 +169,7 @@ function updateCartItemQuantity(itemId, newQuantity) {
 function updateCartTotals() {
     // Calculate subtotal
     cart.subtotal = cart.items.reduce((total, item) => {
-        return total + (item.price * item.quantity);
+        return total + (parseFloat(item.price) * item.quantity);
     }, 0);
     
     // Calculate tax (8%)
@@ -232,7 +234,7 @@ function updateCartDisplay() {
                             <div>
                                 <h6 class="mb-0">${item.name}</h6>
                                 <div class="d-flex align-items-center">
-                                    <small class="text-muted me-2">$${item.price.toFixed(2)} × ${item.quantity}</small>
+                                    <small class="text-muted me-2">$${parseFloat(item.price).toFixed(2)} × ${item.quantity}</small>
                                     <div class="btn-group btn-group-sm">
                                         <button class="btn btn-outline-secondary btn-sm cart-qty-minus" data-item-id="${item.id}">-</button>
                                         <button class="btn btn-outline-secondary btn-sm cart-qty-plus" data-item-id="${item.id}">+</button>
@@ -240,7 +242,7 @@ function updateCartDisplay() {
                                 </div>
                             </div>
                             <div class="d-flex flex-column align-items-end">
-                                <span class="fw-bold">$${(item.price * item.quantity).toFixed(2)}</span>
+                                <span class="fw-bold">$${(parseFloat(item.price) * item.quantity).toFixed(2)}</span>
                                 <button class="btn btn-link text-danger p-0 cart-remove" data-item-id="${item.id}">
                                     <small><i class="fas fa-trash-alt"></i> Remove</small>
                                 </button>
@@ -334,10 +336,10 @@ function updateOrderSummary() {
                         <div class="d-flex justify-content-between">
                             <div>
                                 <div class="order-item-title">${item.name}</div>
-                                <div class="order-item-quantity">${item.quantity} × $${item.price.toFixed(2)}</div>
+                                <div class="order-item-quantity">${item.quantity} × $${parseFloat(item.price).toFixed(2)}</div>
                             </div>
                             <div class="d-flex align-items-center">
-                                <span class="order-item-total me-2">$${(item.price * item.quantity).toFixed(2)}</span>
+                                <span class="order-item-total me-2">$${(parseFloat(item.price) * item.quantity).toFixed(2)}</span>
                                 <span class="order-item-remove" data-item-id="${item.id}">
                                     <i class="fas fa-times"></i>
                                 </span>

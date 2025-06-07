@@ -4,13 +4,49 @@
  */
 
 // Global variables
-let siteSettings = {};
+let siteSettings = {
+  general: {
+    restaurantName: 'Baklovah Baklava & Cafe',
+    logoUrl: '/images/customer/logo.png',
+    tagline: 'Authentic Middle Eastern Sweets & Cuisine',
+    description: 'Family owned Middle Eastern restaurant serving authentic dishes with the finest ingredients.'
+  },
+  theme: {
+    primaryColor: '#8B5E34',
+    secondaryColor: '#6c757d',
+    accentColor: '#ffc107',
+    fontFamily: "'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif"
+  },
+  homepage: {
+    heroTitle: 'Welcome to Baklovah',
+    heroSubtitle: 'Authentic Middle Eastern Cuisine',
+    heroButtonText: 'Order Now',
+    heroButtonLink: '/menu',
+    heroImageUrl: '/images/customer/hero-bg.jpg',
+    featuredCategories: ['baklava', 'kunafa', 'coffee', 'desserts']
+  },
+  contact: {
+    phone: '(555) 123-4567',
+    email: 'contact@baklovahcafe.com',
+    address: '123 Middle Eastern St, San Francisco, CA 94123',
+    mapEmbedUrl: 'https://maps.google.com/maps?q=San%20Francisco&output=embed'
+  },
+  hours: {
+    monday: { open: '11:00', close: '21:00', closed: false },
+    tuesday: { open: '11:00', close: '21:00', closed: false },
+    wednesday: { open: '11:00', close: '21:00', closed: false },
+    thursday: { open: '11:00', close: '22:00', closed: false },
+    friday: { open: '11:00', close: '22:00', closed: false },
+    saturday: { open: '10:00', close: '22:00', closed: false },
+    sunday: { open: '10:00', close: '20:00', closed: false }
+  }
+};
 let initialSettings = {}; // For tracking changes
-let currentTab = 'general'; // Default active tab
 let unsavedChanges = false;
 
 // DOM Ready
 document.addEventListener('DOMContentLoaded', function() {
+  console.log('Site customizer script loaded');
   // Initialize the page
   initializePage();
   
@@ -23,64 +59,221 @@ document.addEventListener('DOMContentLoaded', function() {
  */
 async function initializePage() {
   try {
-    // Show loading state
-    document.getElementById('settingsLoadingSpinner').style.display = 'block';
-    document.querySelector('.customize-container').style.display = 'none';
-    
-    // Fetch site settings
-    await fetchSiteSettings();
+    // Make a copy of initial settings
+    initialSettings = JSON.parse(JSON.stringify(siteSettings));
     
     // Populate form fields with settings
     populateFormFields();
     
-    // Hide loading spinner and show content
-    document.getElementById('settingsLoadingSpinner').style.display = 'none';
-    document.querySelector('.customize-container').style.display = 'block';
-    
-    // Initialize color pickers
+    // Initialize color pickers for theme customization
     initializeColorPickers();
     
-    // Initialize image previews
+    // Initialize image previews for uploads
     initializeImagePreviews();
+    
+    // Setup the theme preview
+    updateThemePreview();
+    
+    console.log('Customization page initialized successfully');
   } catch (error) {
     console.error('Error initializing customization page:', error);
-    showToast('Error loading site settings: ' + error.message, 'error');
-    document.getElementById('settingsLoadingSpinner').style.display = 'none';
+    showToast('Error loading site settings', 'error');
   }
+}
+
+/**
+ * Fetch site settings from the server
+ */
+async function fetchSiteSettings() {
+  try {
+    // In a real application, you would fetch the settings from the server
+    // For now, we're using the default settings defined at the top of this file
+    console.log('Using default site settings');
+    
+    // In the future, we can implement this to fetch from an API
+    // const response = await fetch('/api/site-settings');
+    // if (!response.ok) throw new Error('Failed to fetch site settings');
+    // siteSettings = await response.json();
+    
+    return siteSettings;
+  } catch (error) {
+    console.error('Error fetching site settings:', error);
+    throw error;
+  }
+}
+
+/**
+ * Populate form fields with settings
+ */
+function populateFormFields() {
+  // Restaurant Information
+  document.getElementById('restaurantName').value = siteSettings.general.restaurantName || '';
+  document.getElementById('restaurantTagline').value = siteSettings.general.tagline || '';
+  document.getElementById('restaurantDescription').value = siteSettings.general.description || '';
+  
+  // Theme Settings
+  document.getElementById('primaryColor').value = siteSettings.theme.primaryColor || '#8B5E34';
+  document.getElementById('primaryColorText').value = siteSettings.theme.primaryColor || '#8B5E34';
+  document.getElementById('secondaryColor').value = siteSettings.theme.secondaryColor || '#6c757d';
+  document.getElementById('secondaryColorText').value = siteSettings.theme.secondaryColor || '#6c757d';
+  document.getElementById('accentColor').value = siteSettings.theme.accentColor || '#ffc107';
+  document.getElementById('accentColorText').value = siteSettings.theme.accentColor || '#ffc107';
+  
+  if (document.getElementById('fontFamily')) {
+    const fontSelectElement = document.getElementById('fontFamily');
+    const fontValue = siteSettings.theme.fontFamily || "'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif";
+    
+    // Find the option with matching value, or default to first option
+    for (let i = 0; i < fontSelectElement.options.length; i++) {
+      if (fontSelectElement.options[i].value === fontValue) {
+        fontSelectElement.selectedIndex = i;
+        break;
+      }
+    }
+  }
+  
+  // Hero Section
+  document.getElementById('heroTitle').value = siteSettings.homepage.heroTitle || '';
+  document.getElementById('heroSubtitle').value = siteSettings.homepage.heroSubtitle || '';
+  document.getElementById('heroButtonText').value = siteSettings.homepage.heroButtonText || '';
+  document.getElementById('heroButtonLink').value = siteSettings.homepage.heroButtonLink || '';
+  
+  // Check featured categories
+  const featuredCats = siteSettings.homepage.featuredCategories || [];
+  document.querySelectorAll('#categoriesCheckboxes input[type="checkbox"]').forEach(checkbox => {
+    checkbox.checked = featuredCats.includes(checkbox.value);
+  });
+  
+  console.log('Form fields populated with settings');
+}
+
+/**
+ * Initialize color pickers and their text inputs
+ */
+function initializeColorPickers() {
+  const colorInputs = document.querySelectorAll('input[type="color"]');
+  colorInputs.forEach(colorInput => {
+    const textInput = document.getElementById(colorInput.id + 'Text');
+    if (textInput) {
+      // Ensure the values match on initialization
+      textInput.value = colorInput.value;
+      
+      // Add event listeners to sync values
+      colorInput.addEventListener('input', function() {
+        textInput.value = this.value;
+        updateThemePreview();
+      });
+      
+      textInput.addEventListener('input', function() {
+        // Validate and normalize hex color
+        let color = this.value;
+        if (/^#[0-9A-F]{6}$/i.test(color)) {
+          colorInput.value = color;
+          updateThemePreview();
+        }
+      });
+    }
+  });
+  
+  console.log('Color pickers initialized');
+}
+
+/**
+ * Initialize image preview functionality
+ */
+function initializeImagePreviews() {
+  // Setup file input previews
+  const fileInputs = ['restaurantLogo', 'heroImage'];
+  
+  fileInputs.forEach(inputId => {
+    const fileInput = document.getElementById(inputId);
+    if (!fileInput) return;
+    
+    const previewContainer = document.getElementById('current' + inputId.charAt(0).toUpperCase() + inputId.slice(1) + 'Preview');
+    if (!previewContainer) return;
+    
+    const previewImg = previewContainer.querySelector('img');
+    if (!previewImg) return;
+    
+    // Show current image if available
+    if (inputId === 'restaurantLogo' && siteSettings.general.logoUrl) {
+      previewImg.src = siteSettings.general.logoUrl;
+      previewImg.style.display = 'block';
+    } else if (inputId === 'heroImage' && siteSettings.homepage.heroImageUrl) {
+      previewImg.src = siteSettings.homepage.heroImageUrl;
+      previewImg.style.display = 'block';
+    }
+    
+    // Add change event listener to show preview of selected file
+    fileInput.addEventListener('change', function() {
+      if (this.files && this.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          previewImg.src = e.target.result;
+          previewImg.style.display = 'block';
+          markUnsavedChanges();
+        };
+        reader.readAsDataURL(this.files[0]);
+      } else {
+        previewImg.style.display = 'none';
+      }
+    });
+  });
+  
+  console.log('Image previews initialized');
 }
 
 /**
  * Set up event listeners
  */
 function setupEventListeners() {
-  // Tab navigation
-  document.querySelectorAll('.customize-tab').forEach(tab => {
-    tab.addEventListener('click', function(e) {
-      e.preventDefault();
-      const tabId = this.getAttribute('data-tab');
-      activateTab(tabId);
-    });
-  });
+  // Bootstrap tabs are already handled by Bootstrap's JavaScript
   
-  // Form inputs change detection
-  document.querySelectorAll('.settings-form input, .settings-form textarea, .settings-form select').forEach(input => {
+  // Form inputs change detection - connect to all form inputs in the customization page
+  document.querySelectorAll('.card-body input, .card-body textarea, .card-body select').forEach(input => {
     input.addEventListener('change', function() {
       markUnsavedChanges();
     });
     
     // For text inputs, also listen for keyup
-    if (input.type === 'text' || input.type === 'textarea') {
+    if (input.type === 'text' || input.tagName.toLowerCase() === 'textarea') {
       input.addEventListener('keyup', function() {
         markUnsavedChanges();
       });
     }
   });
   
-  // Save button
-  document.getElementById('saveSettingsBtn').addEventListener('click', saveSettings);
+  // Color picker synchronization
+  document.querySelectorAll('input[type="color"]').forEach(colorInput => {
+    const textInput = document.getElementById(colorInput.id + 'Text');
+    if (textInput) {
+      // Update text when color changes
+      colorInput.addEventListener('input', function() {
+        textInput.value = this.value;
+        updateThemePreview();
+      });
+      
+      // Update color when text changes
+      textInput.addEventListener('input', function() {
+        colorInput.value = this.value;
+        updateThemePreview();
+      });
+    }
+  });
   
-  // Reset button
-  document.getElementById('resetSettingsBtn').addEventListener('click', resetForm);
+  // Save button - use the main save button specified in the template
+  const saveBtn = document.getElementById('saveCustomizationsBtn');
+  if (saveBtn) {
+    saveBtn.addEventListener('click', saveSettings);
+  }
+  
+  // Form submissions - prevent default and handle via API
+  document.querySelectorAll('form').forEach(form => {
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      saveSettings();
+    });
+  });
   
   // Before unload warning
   window.addEventListener('beforeunload', function(e) {
@@ -89,6 +282,222 @@ function setupEventListeners() {
       e.returnValue = 'You have unsaved changes. Are you sure you want to leave?';
       return e.returnValue;
     }
+  });
+  
+  console.log('Event listeners set up successfully');
+}
+
+/**
+ * Updates the theme preview with current color and font settings
+ */
+function updateThemePreview() {
+  const previewEl = document.querySelector('.theme-preview');
+  if (!previewEl) return;
+
+  const primaryColor = document.getElementById('primaryColor').value;
+  const secondaryColor = document.getElementById('secondaryColor').value;
+  const accentColor = document.getElementById('accentColor').value;
+  const fontFamily = document.getElementById('fontFamily')?.value || 
+    "'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif";
+
+  // Apply colors and font to preview
+  previewEl.style.fontFamily = fontFamily;
+  
+  // Update preview elements
+  const previewHeading = previewEl.querySelector('.preview-heading');
+  if (previewHeading) previewHeading.style.color = primaryColor;
+  
+  const previewText = previewEl.querySelector('.preview-text');
+  if (previewText) previewText.style.color = secondaryColor;
+  
+  const primaryBtn = previewEl.querySelector('.preview-primary-btn');
+  if (primaryBtn) {
+    primaryBtn.style.backgroundColor = primaryColor;
+    primaryBtn.style.color = '#fff';
+    primaryBtn.style.borderColor = primaryColor;
+  }
+  
+  const secondaryBtn = previewEl.querySelector('.preview-secondary-btn');
+  if (secondaryBtn) {
+    secondaryBtn.style.backgroundColor = 'transparent';
+    secondaryBtn.style.color = accentColor;
+    secondaryBtn.style.borderColor = accentColor;
+  }
+  
+  console.log('Theme preview updated');
+}
+
+/**
+ * Mark form as having unsaved changes
+ */
+function markUnsavedChanges() {
+  unsavedChanges = true;
+  const saveBtn = document.getElementById('saveCustomizationsBtn');
+  if (saveBtn) {
+    saveBtn.classList.add('btn-pulse');
+  }
+}
+
+/**
+ * Save site settings to the server
+ */
+async function saveSettings() {
+  try {
+    // Show save in progress
+    const saveBtn = document.getElementById('saveCustomizationsBtn');
+    if (saveBtn) {
+      saveBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Saving...';
+      saveBtn.disabled = true;
+    }
+
+    // Collect data from all forms
+    const updatedSettings = {
+      general: {},
+      theme: {},
+      homepage: {},
+      contact: {},
+      hours: {}
+    };
+
+    // Restaurant Info
+    updatedSettings.general.restaurantName = document.getElementById('restaurantName')?.value || '';
+    updatedSettings.general.tagline = document.getElementById('restaurantTagline')?.value || '';
+    updatedSettings.general.description = document.getElementById('restaurantDescription')?.value || '';
+
+    // Theme settings
+    updatedSettings.theme.primaryColor = document.getElementById('primaryColor')?.value || '#8B5E34';
+    updatedSettings.theme.secondaryColor = document.getElementById('secondaryColor')?.value || '#6c757d';
+    updatedSettings.theme.accentColor = document.getElementById('accentColor')?.value || '#ffc107';
+    updatedSettings.theme.fontFamily = document.getElementById('fontFamily')?.value || 
+      "'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif";
+
+    // Homepage settings
+    updatedSettings.homepage.heroTitle = document.getElementById('heroTitle')?.value || '';
+    updatedSettings.homepage.heroSubtitle = document.getElementById('heroSubtitle')?.value || '';
+    updatedSettings.homepage.heroButtonText = document.getElementById('heroButtonText')?.value || '';
+    updatedSettings.homepage.heroButtonLink = document.getElementById('heroButtonLink')?.value || '';
+    
+    // Featured categories
+    const featuredCategories = [];
+    document.querySelectorAll('#categoriesCheckboxes input[type="checkbox"]:checked').forEach(checkbox => {
+      featuredCategories.push(checkbox.value);
+    });
+    updatedSettings.homepage.featuredCategories = featuredCategories;
+
+    // Handle file uploads
+    const logoFile = document.getElementById('restaurantLogo')?.files?.[0];
+    const heroFile = document.getElementById('heroImage')?.files?.[0];
+
+    // Simulate a file upload - in a real app we'd use FormData and fetch
+    if (logoFile) {
+      console.log('Logo file would be uploaded:', logoFile.name);
+      // Placeholder for upload - in production, you'd use FormData and upload to server
+      // updatedSettings.general.logoUrl = '/uploads/' + logoFile.name;
+    }
+
+    if (heroFile) {
+      console.log('Hero image would be uploaded:', heroFile.name);
+      // Placeholder for upload - in production, you'd use FormData and upload to server
+      // updatedSettings.homepage.heroImageUrl = '/uploads/' + heroFile.name;
+    }
+
+    // Update the settings
+    console.log('Settings would be saved to server:', updatedSettings);
+    
+    // In a real app, you'd send this to your API
+    // const response = await fetch('/api/site-settings', {
+    //   method: 'PUT',
+    //   headers: { 'Content-Type': 'application/json' },
+    //   body: JSON.stringify(updatedSettings)
+    // });
+    // if (!response.ok) throw new Error('Failed to save settings');
+
+    // For demo purposes, just update our local copy
+    Object.assign(siteSettings, updatedSettings);
+    initialSettings = JSON.parse(JSON.stringify(siteSettings));
+    unsavedChanges = false;
+
+    // Success message
+    showToast('Settings saved successfully', 'success');
+
+    // Reset save button
+    if (saveBtn) {
+      saveBtn.innerHTML = '<i class="bi bi-save"></i> Save Changes';
+      saveBtn.disabled = false;
+      saveBtn.classList.remove('btn-pulse');
+    }
+  } catch (error) {
+    console.error('Error saving settings:', error);
+    showToast('Error saving settings: ' + error.message, 'error');
+    
+    // Reset save button on error
+    const saveBtn = document.getElementById('saveCustomizationsBtn');
+    if (saveBtn) {
+      saveBtn.innerHTML = '<i class="bi bi-save"></i> Save Changes';
+      saveBtn.disabled = false;
+    }
+  }
+}
+
+/**
+ * Show a toast notification
+ * @param {string} message - The message to display
+ * @param {string} type - The type of toast: success, error, warning, info
+ */
+function showToast(message, type = 'info') {
+  // Create toast container if it doesn't exist
+  let toastContainer = document.querySelector('.toast-container');
+  if (!toastContainer) {
+    toastContainer = document.createElement('div');
+    toastContainer.className = 'toast-container position-fixed bottom-0 end-0 p-3';
+    document.body.appendChild(toastContainer);
+  }
+
+  // Create a unique ID for this toast
+  const toastId = 'toast-' + Date.now();
+  
+  // Set the appropriate color based on type
+  let bgColor = 'bg-primary';
+  let icon = '<i class="bi bi-info-circle me-2"></i>';
+  
+  switch (type) {
+    case 'success':
+      bgColor = 'bg-success';
+      icon = '<i class="bi bi-check-circle me-2"></i>';
+      break;
+    case 'error':
+      bgColor = 'bg-danger';
+      icon = '<i class="bi bi-exclamation-circle me-2"></i>';
+      break;
+    case 'warning':
+      bgColor = 'bg-warning';
+      icon = '<i class="bi bi-exclamation-triangle me-2"></i>';
+      break;
+  }
+
+  // Create the toast HTML
+  const toastHtml = `
+    <div class="toast align-items-center ${bgColor} text-white" role="alert" aria-live="assertive" aria-atomic="true" id="${toastId}">
+      <div class="d-flex">
+        <div class="toast-body">
+          ${icon} ${message}
+        </div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+      </div>
+    </div>
+  `;
+
+  // Add the toast to the container
+  toastContainer.insertAdjacentHTML('beforeend', toastHtml);
+
+  // Initialize and show the toast
+  const toastElement = document.getElementById(toastId);
+  const toast = new bootstrap.Toast(toastElement, { autohide: true, delay: 5000 });
+  toast.show();
+  
+  // Remove the toast element after it's hidden
+  toastElement.addEventListener('hidden.bs.toast', function() {
+    toastElement.remove();
   });
 }
 
