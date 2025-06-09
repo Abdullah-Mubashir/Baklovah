@@ -7,10 +7,10 @@ const express = require('express');
 const router = express.Router();
 const dbAdapter = require('../database/adapter');
 const jwt = require('jsonwebtoken');
-const { verifyToken, isCashier } = require('../middleware/authMiddleware');
+const { authenticate, isCashier } = require('../middleware/auth');
 
 // Middleware to verify cashier is logged in
-const cashierAuth = [verifyToken, isCashier];
+const cashierAuth = [authenticate, isCashier];
 
 // Root route - redirect to menu tab
 router.get('/', (req, res) => {
