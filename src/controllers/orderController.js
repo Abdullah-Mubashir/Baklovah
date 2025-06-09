@@ -148,17 +148,39 @@ async function createOrder(req, res) {
       });
     }
     
-    // Validate total amount
+    // Validate or calculate total amount
+    let calculatedTotalAmount = total_amount;
     if (total_amount === undefined || total_amount === null) {
-      console.error('Missing total_amount in order data');
-      return res.status(400).json({
-        success: false,
-        message: 'Please provide total amount for the order'
-      });
+      console.log('Total amount not provided, attempting to calculate from subtotal and tax');
+      if (subtotal !== undefined && tax !== undefined) {
+        const subTotal = parseFloat(subtotal) || 0;
+        const taxAmount = parseFloat(tax) || 0;
+        const deliveryAmount = parseFloat(delivery_fee) || 0;
+        calculatedTotalAmount = subTotal + taxAmount + deliveryAmount;
+        console.log('Calculated total amount:', calculatedTotalAmount);
+      } else {
+        // Calculate from items if possible
+        if (items && Array.isArray(items) && items.length > 0) {
+          let itemsTotal = 0;
+          items.forEach(item => {
+            const price = parseFloat(item.price) || 0;
+            const quantity = parseInt(item.quantity) || 1;
+            itemsTotal += price * quantity;
+          });
+          console.log('Calculated total from items:', itemsTotal);
+          calculatedTotalAmount = itemsTotal;
+        } else {
+          console.error('Cannot calculate total amount - no items or subtotal/tax provided');
+          return res.status(400).json({
+            success: false,
+            message: 'Please provide total amount or items with prices for the order'
+          });
+        }
+      }
     }
     
     // Ensure all monetary values are numbers and convert from cents to dollars
-    const validatedTotalAmount = parseFloat(total_amount) || 0;
+    const validatedTotalAmount = parseFloat(calculatedTotalAmount) || 0;
     const validatedSubtotal = parseFloat(subtotal) || 0;
     const validatedTax = parseFloat(tax) || 0;
     const validatedDeliveryFee = parseFloat(delivery_fee) || 0;
