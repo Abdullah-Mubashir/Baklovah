@@ -39,6 +39,12 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Handle scroll events to update active nav pill
     window.addEventListener('scroll', updateActiveNavPill);
+
+    // Initialize Bootstrap modal
+    const menuItemModal = document.getElementById('menuItemModal');
+    if (menuItemModal) {
+        new bootstrap.Modal(menuItemModal);
+    }
 });
 
 /**
@@ -47,6 +53,58 @@ document.addEventListener('DOMContentLoaded', function() {
 function setupMenuFiltering() {
     // This will be expanded when filtering options are added
     console.log('Menu filtering ready for implementation');
+}
+
+/**
+ * Create HTML for a menu item card
+ * @param {Object} item - Menu item data
+ * @returns {string} - HTML string for the menu item
+ */
+function createMenuItemHtml(item) {
+    // Format price with 2 decimal places
+    const formattedPrice = parseFloat(item.price).toFixed(2);
+    
+    // Generate tags HTML if the item has dietary tags
+    let tagsHtml = '';
+    if (item.is_vegetarian || item.is_gluten_free || item.is_spicy) {
+        tagsHtml = `<div class="menu-item-tags">`;
+        if (item.is_vegetarian) tagsHtml += `<span class="badge bg-success me-1">Vegetarian</span>`;
+        if (item.is_gluten_free) tagsHtml += `<span class="badge bg-info me-1">Gluten-Free</span>`;
+        if (item.is_spicy) tagsHtml += `<span class="badge bg-danger">Spicy</span>`;
+        tagsHtml += `</div>`;
+    }
+    
+    // Generate availability badge if item is limited
+    const availabilityBadge = item.is_limited_availability ? 
+        `<span class="position-absolute top-0 end-0 badge bg-warning text-dark m-2">Limited</span>` : '';
+    
+    // Return the complete HTML for the menu item card
+    return `
+    <div class="col-md-6 col-lg-4 mb-4">
+        <div class="card menu-item-card h-100" data-item-id="${item.id}">
+            ${availabilityBadge}
+            <div class="menu-item-img-container">
+                <img src="${item.image_url || '/img/placeholder-food.jpg'}" 
+                    class="card-img-top menu-item-img" 
+                    alt="${item.title}">
+            </div>
+            <div class="card-body d-flex flex-column">
+                <div class="d-flex justify-content-between align-items-start">
+                    <h5 class="card-title">${item.title}</h5>
+                    <span class="menu-item-price" data-price="${item.price}">$${formattedPrice}</span>
+                </div>
+                <p class="card-text flex-grow-1">${item.description || 'No description available'}</p>
+                ${tagsHtml}
+                <div class="mt-auto pt-3">
+                    <button class="btn btn-sm btn-primary add-to-cart-btn" 
+                        data-item-id="${item.id}" 
+                        data-item-name="${item.title}" 
+                        data-item-price="${item.price}">Add to Cart</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    `;
 }
 
 /**
@@ -130,8 +188,16 @@ function loadMenuItems() {
                 });
             });
             
-            // Initialize add to cart buttons after rendering
+            // Menu items have already been rendered through the loop above
+            
+            // Initialize add to cart buttons
             initializeAddToCartButtons();
+
+            // Initialize menu item clicks
+            initializeMenuItemClicks();
+
+            // Send viewed items to backend (if any)
+            sendViewedItemsToBackend();
         })
         .catch(error => {
             console.error('Error loading menu items:', error);
@@ -140,8 +206,7 @@ function loadMenuItems() {
             sections.forEach(section => {
                 const sectionElement = document.getElementById(`${section}-items`);
                 if (sectionElement) {
-                    sectionElement.innerHTML = 
-                        '<div class="col-12 text-center"><p>Failed to load menu items. Please try again later.</p></div>';
+                    sectionElement.innerHTML = '<div class="col-12 text-center"><p class="text-danger">Error loading menu items. Please try again later.</p></div>';
                 }
             });
             
@@ -165,8 +230,32 @@ function loadMenuItems() {
  * @returns {string} HTML for the menu item card
  */
 function createMenuItemHtml(item) {
-    // Handle placeholder image if needed
-    const imageUrl = item.image_url || '/images/customer/placeholder-food.jpg';
+    // Handle image url with proper fallback
+    let imageUrl = '/images/customer/placeholder-food.jpg';  // Default fallback
+    
+    if (item.image_url) {
+        // Use real image from S3 when available
+        imageUrl = item.image_url;
+        
+        // Add to image cache for offline use
+        try {
+            const imageCache = JSON.parse(localStorage.getItem('baklovah_image_cache') || '{}');
+            imageCache[item.id] = imageUrl;
+            localStorage.setItem('baklovah_image_cache', JSON.stringify(imageCache));
+        } catch (e) {
+            console.warn('Failed to cache image URL', e);
+        }
+    } else if (item.id) {
+        // Try to get from cache if no image_url but we have an id
+        try {
+            const imageCache = JSON.parse(localStorage.getItem('baklovah_image_cache') || '{}');
+            if (imageCache[item.id]) {
+                imageUrl = imageCache[item.id];
+            }
+        } catch (e) {
+            console.warn('Failed to retrieve cached image', e);
+        }
+    }
     
     // Create tags HTML
     let tagsHtml = '';
@@ -182,10 +271,11 @@ function createMenuItemHtml(item) {
     
     return `
     <div class="col-lg-6 mb-4">
-        <div class="card menu-item-card h-100">
+        <div class="card menu-item-card h-100 cursor-pointer" data-item-id="${item.id}">
             <div class="row g-0">
                 <div class="col-md-4">
-                    <img src="${imageUrl}" class="img-fluid rounded-start h-100 object-fit-cover" alt="${item.title}">
+                    <img src="${imageUrl}" class="img-fluid rounded-start h-100 object-fit-cover" alt="${item.title}" 
+                         loading="lazy" onerror="this.onerror=null; this.src='/images/customer/placeholder-food.jpg';">
                 </div>
                 <div class="col-md-8">
                     <div class="card-body">
@@ -216,17 +306,186 @@ function createMenuItemHtml(item) {
  */
 function initializeAddToCartButtons() {
     document.querySelectorAll('.add-to-cart-btn').forEach(button => {
-        button.addEventListener('click', function() {
+        button.addEventListener('click', function(event) {
+            event.preventDefault();
+            event.stopPropagation(); // Prevent the card click event from firing
+            
             const itemId = this.getAttribute('data-item-id');
             const itemName = this.getAttribute('data-item-name');
             const itemPrice = this.getAttribute('data-item-price');
             
-            // Add item to cart (functionality from cart.js)
-            if (typeof addToCart === 'function') {
-                addToCart(itemId, itemName, itemPrice, 1);
-            }
+            // Add item to cart - pass individual parameters as expected by addToCart function
+            window.addToCart(itemId, itemName, itemPrice, 1);
         });
     });
+
+    // Initialize modal add to cart button
+    document.querySelector('.modal-add-to-cart-btn')?.addEventListener('click', function() {
+        const modal = document.getElementById('menuItemModal');
+        const itemId = modal.getAttribute('data-item-id');
+        const itemName = document.getElementById('menuItemModalLabel').textContent;
+        const itemPrice = document.querySelector('.menu-modal-price').getAttribute('data-price');
+
+        // Add item to cart - pass individual parameters as expected by addToCart function
+        // Also get image URL for item display
+        const imageUrl = document.querySelector('.menu-modal-image')?.src || null;
+        window.addToCart(itemId, itemName, itemPrice, 1, imageUrl);
+        
+        // Hide the modal
+        const bsModal = bootstrap.Modal.getInstance(modal);
+        bsModal.hide();
+    });
+}
+
+/**
+ * Initialize menu item clicks
+ */
+function initializeMenuItemClicks() {
+    document.querySelectorAll('.menu-item-card').forEach(card => {
+        // Prevent clicks on add to cart button from opening the modal
+        card.querySelector('.add-to-cart-btn')?.addEventListener('click', function(e) {
+            e.stopPropagation();
+        });
+        
+        // Add click event to the card
+        card.addEventListener('click', function(event) {
+            // Don't process the event if it originated from the add to cart button
+            if (event.target.classList.contains('add-to-cart-btn') || 
+                event.target.closest('.add-to-cart-btn')) {
+                return;
+            }
+            
+            event.preventDefault();
+            
+            const itemId = this.getAttribute('data-item-id');
+            const itemName = this.querySelector('.card-title').textContent;
+            // Get price content directly from the displayed text, and clean it
+            const itemPriceElem = this.querySelector('.menu-item-price');
+            let itemPrice = '0.00';
+            
+            if (itemPriceElem) {
+                // Try to get from data-price attribute first
+                itemPrice = itemPriceElem.getAttribute('data-price');
+                
+                // If that's not available, extract from text content
+                if (!itemPrice) {
+                    const priceText = itemPriceElem.textContent.trim();
+                    // Remove $ sign and any non-numeric characters except decimal point
+                    itemPrice = priceText.replace(/[^0-9.]/g, '');
+                }
+            }
+            
+            // Ensure we have a valid number
+            const formattedPrice = (parseFloat(itemPrice) || 0).toFixed(2);
+            const itemDescription = this.querySelector('.card-text').textContent;
+            const itemImageElem = this.querySelector('.menu-item-img, img');
+            const itemImageUrl = itemImageElem ? itemImageElem.src : '/images/customer/placeholder-food.jpg';
+            
+            console.log('Menu item clicked:', { itemId, itemName, itemPrice, formattedPrice, itemImageUrl });
+            
+            // Update modal with item details
+            const modal = document.getElementById('menuItemModal');
+            modal.setAttribute('data-item-id', itemId);
+            
+            document.getElementById('menuItemModalLabel').textContent = itemName;
+            
+            const modalPriceElem = document.querySelector('.menu-modal-price');
+            if (modalPriceElem) {
+                modalPriceElem.setAttribute('data-price', itemPrice);
+                modalPriceElem.textContent = `$${formattedPrice}`;
+            }
+            
+            const descriptionElem = document.getElementById('menuItemModalDescription');
+            if (descriptionElem) {
+                descriptionElem.textContent = itemDescription;
+            }
+            
+            // Set the image
+            const modalImage = document.getElementById('menuItemModalImage');
+            if (modalImage) {
+                modalImage.src = itemImageUrl;
+                modalImage.alt = itemName;
+            }
+            
+            // Ensure the add to cart button has correct data
+            const modalAddBtn = modal.querySelector('.modal-add-to-cart-btn');
+            if (modalAddBtn) {
+                modalAddBtn.setAttribute('data-item-id', itemId);
+                modalAddBtn.setAttribute('data-item-name', itemName);
+                modalAddBtn.setAttribute('data-item-price', itemPrice);
+            }
+            
+            // Show modal using Bootstrap API
+            const bsModal = new bootstrap.Modal(modal);
+            bsModal.show();
+            
+            // Track viewed item
+            trackViewedItem(itemId);
+        });
+    });
+}
+
+/**
+ * Track viewed item
+ * @param {string} itemId - ID of the viewed item
+ */
+function trackViewedItem(itemId) {
+    try {
+        // Store in local storage
+        const viewedItems = JSON.parse(localStorage.getItem('baklovah_viewed_items') || '[]');
+        if (!viewedItems.includes(itemId)) {
+            viewedItems.push(itemId);
+            localStorage.setItem('baklovah_viewed_items', JSON.stringify(viewedItems));
+        }
+        
+        // Send to backend immediately
+        fetch('/api/analytics/view-item', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ itemId })
+        })
+        .then(response => {
+            if (!response.ok) {
+                console.warn('Failed to track viewed item on server');
+            }
+        })
+        .catch(error => {
+            console.warn('Error tracking viewed item:', error);
+        });
+    } catch (e) {
+        console.warn('Failed to track viewed item', e);
+    }
+}
+
+/**
+ * Send viewed items to backend
+ */
+function sendViewedItemsToBackend() {
+    try {
+        const viewedItems = JSON.parse(localStorage.getItem('baklovah_viewed_items') || '[]');
+        if (viewedItems.length > 0) {
+            fetch('/api/analytics/view-items-batch', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ itemIds: viewedItems })
+            })
+            .then(response => {
+                if (response.ok) {
+                    // Clear viewed items after successful sync
+                    localStorage.removeItem('baklovah_viewed_items');
+                }
+            })
+            .catch(error => {
+                console.warn('Error syncing viewed items:', error);
+            });
+        }
+    } catch (e) {
+        console.warn('Failed to sync viewed items', e);
+    }
 }
 
 /**

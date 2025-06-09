@@ -3,6 +3,8 @@
  * Handles all operations related to customer orders
  */
 
+const orderService = require('../services/orderService');
+const paymentService = require('../services/paymentService');
 const { pool } = require('../config/database');
 
 /**
@@ -101,94 +103,130 @@ async function getOrderById(req, res) {
  * @param {Object} res - Express response object
  */
 async function createOrder(req, res) {
-  const { customer_name, customer_email, customer_phone, items, total_amount, notes } = req.body;
-  
-  // Validate required fields
-  if (!items || !Array.isArray(items) || items.length === 0 || !total_amount) {
-    return res.status(400).json({
-      success: false,
-      message: 'Please provide items and total amount'
-    });
-  }
-  
-  // Start a transaction
-  let connection;
   try {
-    connection = await pool.getConnection();
-    await connection.beginTransaction();
+    console.log('Order controller received order:', JSON.stringify(req.body));
     
-    // Insert order
-    const [orderResult] = await connection.execute(
-      'INSERT INTO orders (customer_name, customer_email, customer_phone, total_amount, notes) VALUES (?, ?, ?, ?, ?)',
-      [customer_name, customer_email, customer_phone, total_amount, notes]
-    );
+    const { 
+      customer_name, 
+      customer_email, 
+      customer_phone, 
+      delivery_method, 
+      delivery_address, 
+      payment_method, 
+      items, 
+      total_amount, 
+      subtotal, 
+      tax, 
+      delivery_fee, 
+      discount, 
+      notes,
+      paymentIntentId  // This might be provided if card payment was processed already
+    } = req.body;
     
-    const orderId = orderResult.insertId;
-    
-    // Insert order items and update analytics
-    for (const item of items) {
-      // Validate item data
-      if (!item.menu_item_id || !item.quantity) {
-        await connection.rollback();
-        return res.status(400).json({
-          success: false,
-          message: 'Each item must have menu_item_id and quantity'
-        });
-      }
-      
-      // Get current price of menu item
-      const [menuItemRows] = await connection.execute(
-        'SELECT price FROM menu_items WHERE id = ?',
-        [item.menu_item_id]
-      );
-      
-      if (menuItemRows.length === 0) {
-        await connection.rollback();
-        return res.status(404).json({
-          success: false,
-          message: `Menu item with ID ${item.menu_item_id} not found`
-        });
-      }
-      
-      const itemPrice = menuItemRows[0].price;
-      
-      // Insert order item
-      await connection.execute(
-        'INSERT INTO order_items (order_id, menu_item_id, quantity, item_price, notes) VALUES (?, ?, ?, ?, ?)',
-        [orderId, item.menu_item_id, item.quantity, itemPrice, item.notes || null]
-      );
-      
-      // Update analytics (increment purchases)
-      await connection.execute(
-        'UPDATE item_analytics SET purchases = purchases + ? WHERE menu_item_id = ?',
-        [item.quantity, item.menu_item_id]
-      );
+    // Validate required fields with detailed error reporting
+    if (!items) {
+      console.error('Missing items in order data');
+      return res.status(400).json({
+        success: false,
+        message: 'Please provide order items'
+      });
     }
     
-    // Commit transaction
-    await connection.commit();
+    if (!Array.isArray(items)) {
+      console.error('Items is not an array:', typeof items);
+      return res.status(400).json({
+        success: false,
+        message: 'Order items must be an array'
+      });
+    }
+    
+    if (items.length === 0) {
+      console.error('Items array is empty');
+      return res.status(400).json({
+        success: false,
+        message: 'Order must contain at least one item'
+      });
+    }
+    
+    // Validate total amount
+    if (total_amount === undefined || total_amount === null) {
+      console.error('Missing total_amount in order data');
+      return res.status(400).json({
+        success: false,
+        message: 'Please provide total amount for the order'
+      });
+    }
+    
+    // Ensure all monetary values are numbers and convert from cents to dollars
+    const validatedTotalAmount = parseFloat(total_amount) || 0;
+    const validatedSubtotal = parseFloat(subtotal) || 0;
+    const validatedTax = parseFloat(tax) || 0;
+    const validatedDeliveryFee = parseFloat(delivery_fee) || 0;
+    
+    console.log('Monetary values (in cents):', {
+      total_amount: validatedTotalAmount,
+      subtotal: validatedSubtotal,
+      tax: validatedTax,
+      delivery_fee: validatedDeliveryFee
+    });
+    
+    // Validate items array
+    if (!items || !Array.isArray(items) || items.length === 0) {
+      console.error('Invalid items array:', items);
+      return res.status(400).json({
+        success: false,
+        message: 'Please provide at least one item for the order'
+      });
+    }
+
+    // Create order data object with proper type conversion and defaults
+    const orderData = {
+      customerName: customer_name || 'Guest',
+      customerEmail: customer_email || '',
+      customerPhone: customer_phone || '',
+      deliveryMethod: delivery_method || 'pickup',
+      deliveryAddress: delivery_address || {},
+      paymentMethod: payment_method || 'cash',
+      items: items.map(item => {
+        console.log('Processing order item:', item);
+        if (!item) return null; // Skip null items
+        return {
+          id: item.menu_item_id || item.id,  // Support both formats
+          quantity: parseInt(item.quantity) || 1,
+          price: parseFloat(item.price) || 0.00,  // Default to 0 if not provided
+          notes: item.notes || item.item_notes || ''
+        };
+      }).filter(item => item !== null), // Remove any null items
+      subtotal: validatedSubtotal / 100,  // Convert from cents to dollars
+      tax: validatedTax / 100,
+      total: validatedTotalAmount / 100, // Convert from cents to dollars
+      deliveryFee: validatedDeliveryFee / 100,
+      notes: notes || '',
+      paymentIntentId: paymentIntentId || null // If card payment was processed
+    };
+    
+    console.log('Processed order data for service:', orderData);
+    
+    // Use order service to create the order
+    const result = await orderService.createOrder(orderData);
     
     // Notify connected clients about new order
     if (req.io) {
-      req.io.emit('newOrder', { orderId });
+      req.io.emit('newOrder', { orderId: result.orderId });
     }
     
     return res.status(201).json({
       success: true,
       message: 'Order created successfully',
-      orderId
+      orderId: result.orderId,
+      orderNumber: result.orderNumber
     });
   } catch (error) {
-    // Rollback transaction on error
-    if (connection) await connection.rollback();
-    
     console.error('Error creating order:', error);
     return res.status(500).json({
       success: false,
-      message: 'Server error while creating order'
+      message: error.message || 'Server error while creating order'
     });
-  } finally {
-    if (connection) connection.release();
   }
 }
 
@@ -202,7 +240,7 @@ async function updateOrderStatus(req, res) {
   const { status, time_remaining } = req.body;
   
   // Validate status
-  const validStatuses = ['placed', 'preparing', 'ready', 'completed', 'cancelled'];
+  const validStatuses = ['pending', 'processing', 'ready', 'completed', 'cancelled'];
   if (status && !validStatuses.includes(status)) {
     return res.status(400).json({
       success: false,
@@ -213,7 +251,7 @@ async function updateOrderStatus(req, res) {
   try {
     // Check if order exists
     const [checkRows] = await pool.execute(
-      'SELECT * FROM orders WHERE id = ?',
+      'SELECT id, order_number, status, payment_method, payment_status, payment_intent_id FROM orders WHERE id = ?',
       [id]
     );
     
@@ -224,27 +262,76 @@ async function updateOrderStatus(req, res) {
       });
     }
     
-    // Update order
-    let query = 'UPDATE orders SET ';
-    const queryParams = [];
+    const order = checkRows[0];
     
-    if (status) {
-      query += 'status = ?, ';
-      queryParams.push(status);
+    // Handle payment capture for completed orders with card payment
+    if (status === 'completed' && order.payment_method === 'card' && 
+        order.payment_status === 'authorized' && order.payment_intent_id) {
+      try {
+        // Capture the payment
+        const capturedPayment = await paymentService.capturePaymentIntent(order.payment_intent_id);
+        
+        if (capturedPayment && capturedPayment.status === 'succeeded') {
+          // Update payment status to paid
+          await pool.execute(
+            'UPDATE orders SET payment_status = ? WHERE id = ?',
+            ['paid', id]
+          );
+          
+          console.log(`Payment captured for order #${order.order_number}`);
+        } else {
+          console.error(`Failed to capture payment for order #${order.order_number}`);
+        }
+      } catch (paymentError) {
+        console.error(`Error capturing payment for order #${order.order_number}:`, paymentError);
+        // Continue with order status update even if payment capture fails
+        // We'll handle payment issues separately
+      }
     }
     
+    // Handle payment cancellation for cancelled orders with card payment
+    if (status === 'cancelled' && order.payment_method === 'card' && 
+        order.payment_status === 'authorized' && order.payment_intent_id) {
+      try {
+        // Cancel the payment intent
+        const cancelledPayment = await paymentService.cancelPaymentIntent(order.payment_intent_id);
+        
+        if (cancelledPayment && cancelledPayment.status === 'canceled') {
+          // Update payment status to cancelled
+          await pool.execute(
+            'UPDATE orders SET payment_status = ? WHERE id = ?',
+            ['cancelled', id]
+          );
+          
+          console.log(`Payment cancelled for order #${order.order_number}`);
+        } else {
+          console.error(`Failed to cancel payment for order #${order.order_number}`);
+        }
+      } catch (paymentError) {
+        console.error(`Error cancelling payment for order #${order.order_number}:`, paymentError);
+        // Continue with order status update even if payment cancellation fails
+      }
+    }
+    
+    // Update order status
+    await pool.execute(
+      'UPDATE orders SET status = ? WHERE id = ?',
+      [status, id]
+    );
+    
+    // Add entry to order status history
+    await pool.execute(
+      'INSERT INTO order_status_history (order_id, status, notes) VALUES (?, ?, ?)',
+      [id, status, `Order status updated to ${status}`]
+    );
+    
+    // If time_remaining is provided, update it
     if (time_remaining !== undefined) {
-      query += 'time_remaining = ?, ';
-      queryParams.push(time_remaining);
+      await pool.execute(
+        'UPDATE orders SET time_remaining = ? WHERE id = ?',
+        [time_remaining, id]
+      );
     }
-    
-    // Remove trailing comma and space
-    query = query.slice(0, -2);
-    
-    query += ' WHERE id = ?';
-    queryParams.push(id);
-    
-    await pool.execute(query, queryParams);
     
     // Get updated order
     const [rows] = await pool.execute(
@@ -255,6 +342,13 @@ async function updateOrderStatus(req, res) {
     // Emit order update event
     if (req.io) {
       req.io.to(`order_${id}`).emit('orderUpdate', rows[0]);
+      
+      // Also emit to cashier room for all cashiers to see updates
+      req.io.to('cashier_room').emit('orderStatusUpdate', {
+        orderId: id,
+        orderNumber: order.order_number,
+        status: status
+      });
     }
     
     return res.status(200).json({

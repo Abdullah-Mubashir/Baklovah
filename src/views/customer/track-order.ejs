@@ -1,0 +1,162 @@
+<%- include('./partials/header', { title: 'Track Order', currentPath: '/track-order', additionalStyles: ['/css/customer/order.css'] }) %>
+
+<!-- Order Tracking Hero Section -->
+<section class="order-hero-section position-relative">
+    <div class="order-hero-image-container">
+        <img src="/images/customer/order-hero.jpg" alt="Track Order" class="order-hero-image">
+        <div class="order-hero-overlay"></div>
+    </div>
+    <div class="container position-relative order-hero-content text-center">
+        <h1 class="display-4 fw-bold text-white mb-3">Track Your Order</h1>
+        <p class="lead text-white mb-4">See real-time updates on your order status</p>
+    </div>
+</section>
+
+<!-- Order Tracking Content -->
+<section class="py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <!-- Order Lookup Form -->
+                <div id="order-lookup-section" class="<%= typeof orderId === 'undefined' ? '' : 'd-none' %>">
+                    <div class="card mb-4">
+                        <div class="card-header bg-primary text-white">
+                            <h3 class="mb-0">Find Your Order</h3>
+                        </div>
+                        <div class="card-body">
+                            <form id="order-lookup-form">
+                                <div class="mb-3">
+                                    <label for="order-number" class="form-label">Order Number</label>
+                                    <input type="text" class="form-control" id="order-number" placeholder="Enter your order number" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="customer-email" class="form-label">Email</label>
+                                    <input type="email" class="form-control" id="customer-email" placeholder="Enter the email used for ordering" required>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Track Order</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Order Details -->
+                <div id="order-details-section" class="<%= typeof orderId !== 'undefined' ? '' : 'd-none' %>">
+                    <div class="card">
+                        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                            <h3 class="mb-0">Order #<span id="display-order-number"><%= typeof orderNumber !== 'undefined' ? orderNumber : '' %></span></h3>
+                            <span class="badge bg-light text-primary" id="order-status"><%= typeof orderStatus !== 'undefined' ? orderStatus : '' %></span>
+                        </div>
+                        <div class="card-body">
+                            <!-- Order Progress -->
+                            <div class="order-progress mb-4">
+                                <div class="order-progress-steps">
+                                    <div class="progress-step" id="step-placed">
+                                        <div class="step-icon">
+                                            <i class="fas fa-shopping-cart"></i>
+                                        </div>
+                                        <div class="step-label">Order Placed</div>
+                                        <div class="step-time" id="time-placed"></div>
+                                    </div>
+                                    <div class="progress-connector"></div>
+                                    <div class="progress-step" id="step-preparing">
+                                        <div class="step-icon">
+                                            <i class="fas fa-utensils"></i>
+                                        </div>
+                                        <div class="step-label">Preparing</div>
+                                        <div class="step-time" id="time-preparing"></div>
+                                    </div>
+                                    <div class="progress-connector"></div>
+                                    <div class="progress-step" id="step-ready">
+                                        <div class="step-icon">
+                                            <i class="fas fa-check-circle"></i>
+                                        </div>
+                                        <div class="step-label">Ready</div>
+                                        <div class="step-time" id="time-ready"></div>
+                                    </div>
+                                    <div class="progress-connector"></div>
+                                    <div class="progress-step" id="step-completed">
+                                        <div class="step-icon">
+                                            <i class="fas fa-flag-checkered"></i>
+                                        </div>
+                                        <div class="step-label">Completed</div>
+                                        <div class="step-time" id="time-completed"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Order Information -->
+                            <div class="row mb-4">
+                                <div class="col-md-6">
+                                    <h5>Customer Information</h5>
+                                    <p class="mb-1"><strong>Name:</strong> <span id="customer-name"><%= typeof customerName !== 'undefined' ? customerName : '' %></span></p>
+                                    <p class="mb-1"><strong>Email:</strong> <span id="customer-email-display"><%= typeof customerEmail !== 'undefined' ? customerEmail : '' %></span></p>
+                                    <p class="mb-0"><strong>Phone:</strong> <span id="customer-phone"><%= typeof customerPhone !== 'undefined' ? customerPhone : '' %></span></p>
+                                </div>
+                                <div class="col-md-6">
+                                    <h5>Order Information</h5>
+                                    <p class="mb-1"><strong>Ordered:</strong> <span id="order-time"><%= typeof orderTime !== 'undefined' ? new Date(orderTime).toLocaleString() : '' %></span></p>
+                                    <p class="mb-1"><strong>Method:</strong> <span id="delivery-method"><%= typeof deliveryMethod !== 'undefined' ? deliveryMethod : '' %></span></p>
+                                    <p class="mb-0"><strong>Estimated Time:</strong> <span id="estimated-time"><%= typeof estimatedTime !== 'undefined' ? estimatedTime : 'Calculating...' %></span></p>
+                                </div>
+                            </div>
+                            
+                            <!-- Order Items -->
+                            <h5>Order Items</h5>
+                            <div class="table-responsive">
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Item</th>
+                                            <th>Quantity</th>
+                                            <th class="text-end">Price</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="order-items">
+                                        <% if (typeof orderItems !== 'undefined') { %>
+                                            <% orderItems.forEach(item => { %>
+                                                <tr>
+                                                    <td><%= item.title %></td>
+                                                    <td><%= item.quantity %></td>
+                                                    <td class="text-end">$<%= (item.item_price * item.quantity).toFixed(2) %></td>
+                                                </tr>
+                                            <% }); %>
+                                        <% } %>
+                                    </tbody>
+                                    <tfoot id="order-totals">
+                                        <tr>
+                                            <td colspan="2" class="text-end"><strong>Subtotal:</strong></td>
+                                            <td class="text-end">$<span id="subtotal"><%= typeof subtotal !== 'undefined' ? subtotal.toFixed(2) : '0.00' %></span></td>
+                                        </tr>
+                                        <tr class="<%= typeof deliveryFee !== 'undefined' && deliveryFee > 0 ? '' : 'd-none' %> delivery-fee-row">
+                                            <td colspan="2" class="text-end"><strong>Delivery Fee:</strong></td>
+                                            <td class="text-end">$<span id="delivery-fee"><%= typeof deliveryFee !== 'undefined' ? deliveryFee.toFixed(2) : '0.00' %></span></td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="2" class="text-end"><strong>Tax:</strong></td>
+                                            <td class="text-end">$<span id="tax"><%= typeof tax !== 'undefined' ? tax.toFixed(2) : '0.00' %></span></td>
+                                        </tr>
+                                        <tr class="<%= typeof discount !== 'undefined' && discount > 0 ? '' : 'd-none' %> discount-row">
+                                            <td colspan="2" class="text-end text-success"><strong>Discount:</strong></td>
+                                            <td class="text-end text-success">-$<span id="discount"><%= typeof discount !== 'undefined' ? discount.toFixed(2) : '0.00' %></span></td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="2" class="text-end"><strong>Total:</strong></td>
+                                            <td class="text-end"><strong>$<span id="total"><%= typeof totalAmount !== 'undefined' ? totalAmount.toFixed(2) : '0.00' %></span></strong></td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                            
+                            <div class="mt-4">
+                                <a href="/" class="btn btn-outline-primary">Return to Home</a>
+                                <a href="/menu" class="btn btn-primary">Order More</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<%- include('./partials/footer', { additionalScripts: ['/js/customer/track-order.js'] }) %>

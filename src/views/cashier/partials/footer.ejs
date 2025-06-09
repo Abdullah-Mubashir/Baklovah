@@ -1,0 +1,36 @@
+        </div>
+    </div>
+
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Socket.IO Client -->
+    <script src="/socket.io/socket.io.js"></script>
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Common Cashier JS -->
+    <script src="/js/cashier/common.js"></script>
+    <!-- Load Cart JS first -->
+    <script src="/js/cashier/cart.js"></script>
+    <!-- Then load Menu JS -->
+    <script src="/js/cashier/menu.js"></script>
+    <!-- Ensure initialization -->
+    <script>
+        // Wait for DOM content to load completely
+        document.addEventListener('DOMContentLoaded', function() {
+            // Make sure everything is initialized in the correct order
+            setTimeout(() => {
+                console.log('Initializing menu and cart functionality...');
+                if (typeof initializeAddToOrderButtons === 'function') {
+                    initializeAddToOrderButtons();
+                }
+            }, 500); // Small delay to ensure all scripts are loaded
+        });
+    </script>
+    
+    <% if (typeof additionalScripts !== 'undefined' && additionalScripts) { %>
+        <% additionalScripts.forEach(script => { %>
+            <script src="<%= script %>"></script>
+        <% }); %>
+    <% } %>
+</body>
+</html>

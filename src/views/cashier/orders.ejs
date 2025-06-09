@@ -1,0 +1,597 @@
+<!-- Cashier Order Management Interface -->
+<div class="container-fluid mt-4">
+  <h1>Order Management</h1>
+  
+  <!-- Order Filters -->
+  <div class="row mb-4">
+    <div class="col-md-12">
+      <div class="card">
+        <div class="card-body">
+          <h5>Filter Orders</h5>
+          <div class="row">
+            <div class="col-md-3">
+              <select id="statusFilter" class="form-control">
+                <option value="">All Statuses</option>
+                <option value="pending">Pending</option>
+                <option value="processing">Processing</option>
+                <option value="ready">Ready</option>
+                <option value="completed">Completed</option>
+                <option value="cancelled">Cancelled</option>
+              </select>
+            </div>
+            <div class="col-md-3">
+              <input type="text" id="orderSearch" class="form-control" placeholder="Search by Order # or Customer">
+            </div>
+            <div class="col-md-3">
+              <button onclick="fetchOrders()" class="btn btn-primary">Apply Filters</button>
+              <button onclick="resetFilters()" class="btn btn-secondary">Reset</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Orders Table -->
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card">
+        <div class="card-body">
+          <h5>Current Orders</h5>
+          <div id="ordersTableContainer">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>Order #</th>
+                  <th>Customer</th>
+                  <th>Items</th>
+                  <th>Total</th>
+                  <th>Status</th>
+                  <th>Payment</th>
+                  <th>Time</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="ordersTableBody">
+                <!-- Orders will be populated here -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Order Details Modal -->
+  <div class="modal fade" id="orderDetailsModal" tabindex="-1" role="dialog" aria-labelledby="orderDetailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="orderDetailsModalLabel">Order Details</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body" id="orderDetailsContent">
+          <!-- Order details will be populated here -->
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" onclick="updateOrderStatusFromModal()">Update Status</button>
+          <button type="button" class="btn btn-success" id="paymentActionBtn" style="display:none;">Process Payment</button>
+          <button type="button" class="btn btn-success" onclick="addItemsToOrder()">Add Items</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// Initialize Socket.io for real-time updates
+const socket = io();
+
+// Join cashier room for order updates
+socket.emit('join_cashier_room');
+
+// Listen for new orders
+socket.on('newOrder', function(data) {
+  showNotification('New Order', 'Order #' + data.orderNumber + ' has been placed.', 'info');
+  fetchOrders();
+});
+
+// Listen for order status updates
+socket.on('orderStatusUpdate', function(data) {
+  showNotification('Order Updated', 'Order #' + data.orderNumber + ' status updated to ' + data.status, 'info');
+  fetchOrders();
+});
+
+// Function to show notification
+function showNotification(title, message, type) {
+  // You can implement your preferred notification system here
+  console.log(title, message, type);
+  alert(message); // Simple alert for now
+}
+
+// Fetch orders based on filters
+function fetchOrders() {
+  const status = document.getElementById('statusFilter').value;
+  const search = document.getElementById('orderSearch').value;
+  
+  let url = '/api/orders';
+  let params = [];
+  
+  if (status) {
+    params.push('status=' + encodeURIComponent(status));
+  }
+  if (search) {
+    params.push('search=' + encodeURIComponent(search));
+  }
+  if (params.length > 0) {
+    url += '?' + params.join('&');
+  }
+  
+  fetch(url)
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        displayOrders(data.data);
+      } else {
+        console.error('Failed to fetch orders:', data.message);
+      }
+    })
+    .catch(error => console.error('Error fetching orders:', error));
+}
+
+// Reset filters
+function resetFilters() {
+  document.getElementById('statusFilter').value = '';
+  document.getElementById('orderSearch').value = '';
+  fetchOrders();
+}
+
+// Display orders in table
+function displayOrders(orders) {
+  const tbody = document.getElementById('ordersTableBody');
+  tbody.innerHTML = '';
+  
+  orders.forEach(order => {
+    const row = document.createElement('tr');
+    
+    // Format items summary
+    let itemsSummary = '';
+    if (order.items && order.items.length > 0) {
+      itemsSummary = order.items.map(item => `${item.quantity}x ${item.title}`).join(', ');
+    } else {
+      itemsSummary = 'Items not available';
+    }
+    
+    // Format time
+    let timeStr = new Date(order.order_time || order.order_date).toLocaleTimeString();
+    
+    row.innerHTML = `
+      <td>#${order.order_number}</td>
+      <td>${order.customer_name || 'Guest'}</td>
+      <td>${itemsSummary}</td>
+      <td>$${parseFloat(order.total).toFixed(2)}</td>
+      <td><span class="badge badge-${getBadgeClass(order.status)}">${order.status}</span></td>
+      <td><span class="badge badge-${getPaymentBadgeClass(order.payment_status)}">${order.payment_status}</span></td>
+      <td>${timeStr}</td>
+      <td>
+        <button class="btn btn-sm btn-info" onclick="viewOrderDetails('${order.id}')">Details</button>
+        <button class="btn btn-sm btn-primary" onclick="quickUpdateStatus('${order.id}', 'processing')">Process</button>
+        <button class="btn btn-sm btn-success" onclick="quickUpdateStatus('${order.id}', 'ready')">Ready</button>
+      </td>
+    `;
+    
+    tbody.appendChild(row);
+  });
+}
+
+// Get badge class based on status
+function getBadgeClass(status) {
+  switch(status) {
+    case 'pending': return 'secondary';
+    case 'processing': return 'primary';
+    case 'ready': return 'info';
+    case 'completed': return 'success';
+    case 'cancelled': return 'danger';
+    default: return 'secondary';
+  }
+}
+
+// Get badge class based on payment status
+function getPaymentBadgeClass(status) {
+  switch(status) {
+    case 'unpaid': return 'danger';
+    case 'authorized': return 'warning';
+    case 'paid': return 'success';
+    default: return 'secondary';
+  }
+}
+
+// Quick update status
+function quickUpdateStatus(orderId, status) {
+  fetch(`/api/orders/${orderId}/status`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ status: status })
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.success) {
+      showNotification('Status Updated', 'Order status updated successfully', 'success');
+      fetchOrders();
+    } else {
+      showNotification('Error', data.message || 'Failed to update order status', 'error');
+    }
+  })
+  .catch(error => {
+    console.error('Error updating status:', error);
+    showNotification('Error', 'Failed to update order status', 'error');
+  });
+}
+
+// View order details
+function viewOrderDetails(orderId) {
+  fetch(`/api/orders/${orderId}`)
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        displayOrderDetails(data.data);
+        $('#orderDetailsModal').modal('show');
+      } else {
+        console.error('Failed to fetch order details:', data.message);
+        showNotification('Error', 'Failed to load order details', 'error');
+      }
+    })
+    .catch(error => {
+      console.error('Error fetching order details:', error);
+      showNotification('Error', 'Failed to load order details', 'error');
+    });
+}
+
+// Display order details in modal
+function displayOrderDetails(order) {
+  const content = document.getElementById('orderDetailsContent');
+  
+  // Format items list
+  let itemsHtml = '<ul class="list-group mb-3">';
+  if (order.items && order.items.length > 0) {
+    order.items.forEach(item => {
+      itemsHtml += `<li class="list-group-item d-flex justify-content-between lh-condensed">
+        <div>
+          <h6 class="my-0">${item.quantity}x ${item.title}</h6>
+          <small class="text-muted">${item.item_notes || ''}</small>
+        </div>
+        <span class="text-muted">$${parseFloat(item.price * item.quantity).toFixed(2)}</span>
+      </li>`;
+    });
+  } else {
+    itemsHtml += '<li class="list-group-item">No items available</li>';
+  }
+  itemsHtml += '</ul>';
+  
+  // Format delivery address if available
+  let addressHtml = '';
+  if (order.delivery_method === 'delivery' && order.delivery_address) {
+    try {
+      const addr = typeof order.delivery_address === 'string' 
+        ? JSON.parse(order.delivery_address) 
+        : order.delivery_address;
+      addressHtml = `
+        <h6>Delivery Address</h6>
+        <p class="text-muted">
+          ${addr.street || ''}<br>
+          ${addr.city || ''}, ${addr.state || ''} ${addr.zip || ''}
+        </p>
+      `;
+    } catch (e) {
+      addressHtml = `<p class="text-muted">Invalid address format</p>`;
+      console.error('Error parsing address:', e);
+    }
+  } else if (order.delivery_method === 'pickup') {
+    addressHtml = `<p class="text-muted">Customer Pickup</p>`;
+  }
+  
+  // Format payment information
+  let paymentInfoHtml = '';
+  if (order.payment_method === 'card') {
+    paymentInfoHtml = `
+      <div class="alert ${getPaymentAlertClass(order.payment_status)} mt-3">
+        <h6 class="mb-0">Payment Information</h6>
+        <p class="mb-0">
+          <strong>Method:</strong> Credit Card<br>
+          <strong>Status:</strong> ${formatPaymentStatus(order.payment_status)}<br>
+          ${order.payment_intent_id ? `<strong>Payment ID:</strong> ${order.payment_intent_id}<br>` : ''}
+        </p>
+      </div>
+    `;
+  } else {
+    paymentInfoHtml = `
+      <div class="alert alert-info mt-3">
+        <h6 class="mb-0">Payment Information</h6>
+        <p class="mb-0">
+          <strong>Method:</strong> Cash on Delivery/Pickup<br>
+          <strong>Status:</strong> ${formatPaymentStatus(order.payment_status)}
+        </p>
+      </div>
+    `;
+  }
+  
+  content.innerHTML = `
+    <h5>Order #${order.order_number}</h5>
+    <p>Placed on: ${new Date(order.order_time || order.order_date).toLocaleString()}</p>
+    
+    <div class="row">
+      <div class="col-md-6">
+        <h6>Customer Information</h6>
+        <p class="text-muted">
+          Name: ${order.customer_name || 'Guest'}<br>
+          Email: ${order.customer_email || 'Not provided'}<br>
+          Phone: ${order.customer_phone || 'Not provided'}
+        </p>
+        ${addressHtml}
+      </div>
+      
+      <div class="col-md-6 text-right">
+        <h6>Order Summary</h6>
+        <ul class="list-group list-group-flush">
+          <li class="list-group-item d-flex justify-content-between lh-condensed px-0">
+            <span>Subtotal</span>
+            <span>$${parseFloat(order.subtotal).toFixed(2)}</span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between lh-condensed px-0">
+            <span>Tax</span>
+            <span>$${parseFloat(order.tax).toFixed(2)}</span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between lh-condensed px-0 font-weight-bold">
+            <span>Total</span>
+            <span>$${parseFloat(order.total).toFixed(2)}</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+    
+    ${paymentInfoHtml}
+    
+    <h6 class="mt-3">Items Ordered</h6>
+    ${itemsHtml}
+    
+    <h6 class="mt-3">Notes</h6>
+    <p class="text-muted">${order.notes || order.customer_notes || 'No notes provided'}</p>
+    
+    <h6 class="mt-3">Status</h6>
+    <div class="input-group mb-3" style="max-width: 300px;">
+      <select class="form-control" id="newOrderStatus">
+        <option value="pending" ${order.status === 'pending' ? 'selected' : ''}>Pending</option>
+        <option value="processing" ${order.status === 'processing' ? 'selected' : ''}>Processing</option>
+        <option value="ready" ${order.status === 'ready' ? 'selected' : ''}>Ready</option>
+        <option value="completed" ${order.status === 'completed' ? 'selected' : ''}>Completed</option>
+        <option value="cancelled" ${order.status === 'cancelled' ? 'selected' : ''}>Cancelled</option>
+      </select>
+    </div>
+    
+    <input type="hidden" id="currentOrderId" value="${order.id}">
+    <input type="hidden" id="currentPaymentMethod" value="${order.payment_method}">
+    <input type="hidden" id="currentPaymentStatus" value="${order.payment_status}">
+    <input type="hidden" id="currentPaymentIntentId" value="${order.payment_intent_id || ''}">
+  `;
+  
+  // Setup payment action button
+  setupPaymentActionButton(order);
+}
+
+// Format payment status for display
+function formatPaymentStatus(status) {
+  switch(status) {
+    case 'unpaid': return 'Unpaid';
+    case 'authorized': return 'Authorized (Not Captured)';
+    case 'paid': return 'Paid';
+    case 'failed': return 'Failed';
+    case 'cancelled': return 'Cancelled';
+    default: return status.charAt(0).toUpperCase() + status.slice(1);
+  }
+}
+
+// Get alert class for payment status
+function getPaymentAlertClass(status) {
+  switch(status) {
+    case 'unpaid': return 'alert-danger';
+    case 'authorized': return 'alert-warning';
+    case 'paid': return 'alert-success';
+    case 'failed': return 'alert-danger';
+    case 'cancelled': return 'alert-secondary';
+    default: return 'alert-info';
+  }
+}
+
+// Setup payment action button based on order status
+function setupPaymentActionButton(order) {
+  const paymentActionBtn = document.getElementById('paymentActionBtn');
+  
+  // Only show payment actions for card payments
+  if (order.payment_method === 'card') {
+    paymentActionBtn.style.display = 'inline-block';
+    
+    if (order.payment_status === 'authorized') {
+      paymentActionBtn.innerHTML = 'Capture Payment';
+      paymentActionBtn.className = 'btn btn-success';
+      paymentActionBtn.onclick = () => capturePayment(order.id, order.payment_intent_id);
+    } else if (order.payment_status === 'unpaid') {
+      paymentActionBtn.innerHTML = 'Process Payment';
+      paymentActionBtn.className = 'btn btn-primary';
+      paymentActionBtn.onclick = () => processPayment(order.id);
+    } else if (order.payment_status === 'paid') {
+      paymentActionBtn.innerHTML = 'Payment Complete';
+      paymentActionBtn.className = 'btn btn-outline-success';
+      paymentActionBtn.disabled = true;
+    } else if (order.payment_status === 'failed') {
+      paymentActionBtn.innerHTML = 'Retry Payment';
+      paymentActionBtn.className = 'btn btn-warning';
+      paymentActionBtn.onclick = () => processPayment(order.id);
+    } else if (order.payment_status === 'cancelled') {
+      paymentActionBtn.innerHTML = 'Payment Cancelled';
+      paymentActionBtn.className = 'btn btn-outline-secondary';
+      paymentActionBtn.disabled = true;
+    }
+  } else {
+    // Hide for cash payments
+    paymentActionBtn.style.display = 'none';
+  }
+}
+
+// Capture a payment that was previously authorized
+function capturePayment(orderId, paymentIntentId) {
+  if (!paymentIntentId) {
+    showNotification('Error', 'No payment intent ID available', 'error');
+    return;
+  }
+  
+  if (!confirm('Are you sure you want to capture this payment? This will charge the customer\'s card.')) {
+    return;
+  }
+  
+  fetch(`/api/payment/${paymentIntentId}/capture`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.success) {
+      showNotification('Success', 'Payment captured successfully', 'success');
+      // Update order payment status
+      fetch(`/api/orders/${orderId}/payment`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ payment_status: 'paid' })
+      })
+      .then(() => {
+        // Refresh order details
+        viewOrderDetails(orderId);
+      });
+    } else {
+      showNotification('Error', data.message || 'Failed to capture payment', 'error');
+    }
+  })
+  .catch(error => {
+    console.error('Error capturing payment:', error);
+    showNotification('Error', 'Failed to capture payment', 'error');
+  });
+}
+
+// Process a payment manually (for cash payments or retries)
+function processPayment(orderId) {
+  if (!confirm('Mark this payment as processed?')) {
+    return;
+  }
+  
+  fetch(`/api/orders/${orderId}/payment`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ payment_status: 'paid' })
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.success) {
+      showNotification('Success', 'Payment status updated successfully', 'success');
+      viewOrderDetails(orderId);
+    } else {
+      showNotification('Error', data.message || 'Failed to update payment status', 'error');
+    }
+  })
+  .catch(error => {
+    console.error('Error updating payment status:', error);
+    showNotification('Error', 'Failed to update payment status', 'error');
+  });
+}
+
+// Update order status from modal
+function updateOrderStatusFromModal() {
+  const orderId = document.getElementById('currentOrderId').value;
+  const status = document.getElementById('newOrderStatus').value;
+  const paymentMethod = document.getElementById('currentPaymentMethod').value;
+  const paymentStatus = document.getElementById('currentPaymentStatus').value;
+  const paymentIntentId = document.getElementById('currentPaymentIntentId').value;
+  
+  if (!orderId || !status) {
+    showNotification('Error', 'Missing order ID or status', 'error');
+    return;
+  }
+  
+  // Show confirmation for completed orders with card payment that need to be captured
+  if (status === 'completed' && paymentMethod === 'card' && paymentStatus === 'authorized') {
+    if (confirm('This order has a pending card payment. Marking the order as completed will capture the payment. Continue?')) {
+      // Proceed with status update, which will trigger payment capture on the server
+    } else {
+      return; // User cancelled
+    }
+  }
+  
+  // Show confirmation for cancelled orders with card payment that need to be cancelled
+  if (status === 'cancelled' && paymentMethod === 'card' && paymentStatus === 'authorized') {
+    if (!confirm('This will cancel the order and release the payment authorization. Continue?')) {
+      return; // User cancelled
+    }
+  }
+  
+  // Update order status
+  fetch(`/api/orders/${orderId}/status`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ status: status })
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.success) {
+      // Show appropriate message based on status
+      let message = 'Order status updated successfully';
+      
+      if (status === 'completed' && paymentMethod === 'card' && paymentStatus === 'authorized') {
+        message = 'Order completed and payment captured';
+      } else if (status === 'cancelled' && paymentMethod === 'card' && paymentStatus === 'authorized') {
+        message = 'Order cancelled and payment authorization released';
+      }
+      
+      showNotification('Status Updated', message, 'success');
+      $('#orderDetailsModal').modal('hide');
+      fetchOrders();
+    } else {
+      showNotification('Error', data.message || 'Failed to update order status', 'error');
+    }
+  })
+  .catch(error => {
+    console.error('Error updating status:', error);
+    showNotification('Error', 'Failed to update order status', 'error');
+  });
+}
+
+// Add items to order
+function addItemsToOrder() {
+  const orderId = document.getElementById('currentOrderId').value;
+  
+  // You can implement a form or modal here to add new items
+  // For simplicity, we'll just alert for now
+  alert(`Adding items to order ${orderId}`);
+  
+  // Optionally, redirect to a menu page with the order ID to add items
+  // window.location.href = `/cashier/menu?orderId=${orderId}`;
+}
+
+// Initialize the page
+$(document).ready(function() {
+  fetchOrders();
+  
+  // Refresh orders every 30 seconds
+  setInterval(fetchOrders, 30000);
+});
+</script>

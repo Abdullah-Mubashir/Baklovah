@@ -3,13 +3,82 @@
  * Handles order page functionality for the customer-facing website
  */
 
+// Function to load menu items
+function loadMenuItems() {
+    fetch('/api/menu')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                window.menuItems = data.data;
+                console.log('Menu items loaded:', window.menuItems.length);
+            } else {
+                console.error('Failed to load menu items:', data.message);
+                window.menuItems = [];
+            }
+        })
+        .catch(error => {
+            console.error('Error loading menu items:', error);
+            window.menuItems = [];
+        });
+}
+
+// Function to initialize cart
+function initializeCart() {
+    // Check if cart exists in localStorage
+    const savedCart = localStorage.getItem('baklovahCart');
+    
+    if (savedCart) {
+        try {
+            // Parse saved cart data
+            const parsedCart = JSON.parse(savedCart);
+            window.cart = parsedCart;
+            console.log('Cart loaded from localStorage:', window.cart);
+        } catch (error) {
+            console.error('Error parsing saved cart:', error);
+            // Initialize empty cart if parsing fails
+            window.cart = {
+                items: [],
+                subtotal: 0,
+                tax: 0,
+                total: 0,
+                deliveryFee: 0,
+                discount: 0
+            };
+        }
+    } else {
+        // Initialize empty cart if no saved cart exists
+        window.cart = {
+            items: [],
+            subtotal: 0,
+            tax: 0,
+            total: 0,
+            deliveryFee: 0,
+            discount: 0
+        };
+        console.log('Initialized empty cart');
+    }
+}
+
 // Wait for the DOM to be fully loaded
 document.addEventListener('DOMContentLoaded', function() {
+    // Initialize cart
+    initializeCart();
+    
+    // Load menu items
+    loadMenuItems();
+    
     // Initialize order steps navigation
     initOrderStepsNavigation();
     
     // Handle delivery method change
     handleDeliveryMethodChange();
+    
+    // Initialize address fields required state based on initial delivery method
+    const deliveryRadio = document.getElementById('delivery');
+    const pickupRadio = document.getElementById('pickup');
+    if (deliveryRadio && pickupRadio) {
+        toggleAddressFieldsRequired(deliveryRadio.checked);
+    }
     
     // Handle payment method change
     handlePaymentMethodChange();
@@ -122,7 +191,7 @@ function initOrderStepsNavigation() {
     // Step 3 to Step 4 (Payment to Confirmation)
     const placeOrderBtn = document.getElementById('place-order');
     if (placeOrderBtn) {
-        placeOrderBtn.addEventListener('click', function() {
+        placeOrderBtn.addEventListener('click', async function() {
             // Simulate order processing
             placeOrderBtn.disabled = true;
             placeOrderBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Processing...';
@@ -167,6 +236,9 @@ function handleDeliveryMethodChange() {
                 deliveryAddressSection.classList.remove('d-none');
                 pickupSection.classList.add('d-none');
                 
+                // Make address fields required
+                toggleAddressFieldsRequired(true);
+                
                 // Add delivery fee
                 cart.deliveryFee = 3.99;
                 updateCartTotals();
@@ -183,6 +255,9 @@ function handleDeliveryMethodChange() {
                 deliveryAddressSection.classList.add('d-none');
                 pickupSection.classList.remove('d-none');
                 
+                // Make address fields not required
+                toggleAddressFieldsRequired(false);
+                
                 // Remove delivery fee
                 cart.deliveryFee = 0;
                 updateCartTotals();
@@ -194,6 +269,24 @@ function handleDeliveryMethodChange() {
             }
         });
     }
+}
+
+/**
+ * Toggle the required attribute on address fields based on delivery method
+ * @param {boolean} isRequired - Whether the fields should be required
+ */
+function toggleAddressFieldsRequired(isRequired) {
+    const addressFields = ['address', 'city', 'state', 'zip'];
+    addressFields.forEach(fieldId => {
+        const field = document.getElementById(fieldId);
+        if (field) {
+            if (isRequired) {
+                field.setAttribute('required', '');
+            } else {
+                field.removeAttribute('required');
+            }
+        }
+    });
 }
 
 /**
@@ -331,20 +424,25 @@ function loadOrderMenuItems() {
 
 /**
  * Initialize Stripe elements for payment
- * This is a placeholder for future Stripe integration
+ * This function is now just a wrapper around the payment.js functionality
  */
 function initStripeElements() {
-    // This will be replaced with actual Stripe integration
-    console.log('Stripe elements ready for implementation');
+    // This is now handled in payment.js
+    // initializeStripe() is called from payment.js when the payment section becomes active
+    console.log('Stripe elements initialization delegated to payment.js');
 }
 
 /**
  * Update confirmation details after order is placed
+ * @param {string} orderNumber - The order number from the server
+ * @param {number} orderId - The order ID from the server
  */
-function updateConfirmationDetails() {
-    // Generate random order number
-    const orderNumber = Math.floor(100000 + Math.random() * 900000);
+function updateConfirmationDetails(orderNumber, orderId) {
+    // Set the order number from the server
     document.getElementById('order-number').textContent = orderNumber;
+    
+    // Store the order ID for order tracking
+    window.orderId = orderId;
     
     // Set estimated time based on delivery method
     const deliveryMethod = document.querySelector('input[name="deliveryMethod"]:checked');
@@ -381,59 +479,168 @@ function updateConfirmationDetails() {
  * Initialize order submission
  */
 function initOrderSubmission() {
-    // This will be expanded with actual order submission logic
-    console.log('Order submission ready for implementation');
+    // Connect order placement logic to payment processing
+    // Get the place order button
+    const placeOrderBtn = document.getElementById('place-order');
     
-    // Apply promo code button
-    const applyPromoBtn = document.getElementById('apply-promo');
-    if (applyPromoBtn) {
-        applyPromoBtn.addEventListener('click', function() {
-            const promoCode = document.getElementById('promo-code').value.trim();
+    if (placeOrderBtn) {
+        placeOrderBtn.addEventListener('click', async function(event) {
+            event.preventDefault();
             
-            if (promoCode === '') {
-                window.showToast('Please enter a promo code', 'warning');
-                return;
-            }
+            // Disable button to prevent multiple submissions
+            placeOrderBtn.disabled = true;
+            placeOrderBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Processing...';
             
-            // Simulate promo code validation
-            if (promoCode.toLowerCase() === 'welcome10') {
-                // Apply 10% discount
-                cart.discount = cart.subtotal * 0.1;
-                cart.total = cart.subtotal + cart.tax - cart.discount;
-                if (cart.deliveryFee) cart.total += cart.deliveryFee;
+            try {
+                // Get form data
+                const customerName = document.getElementById('name').value;
+                const customerEmail = document.getElementById('email').value;
+                const customerPhone = document.getElementById('phone').value;
                 
-                saveCart();
-                updateCartDisplay();
+                // Get order notes with a check for element existence
+                const orderNotesElement = document.getElementById('order-notes');
+                const orderNotes = orderNotesElement ? orderNotesElement.value : '';
                 
-                window.showToast('Promo code applied: 10% discount', 'success');
+                // Get selected payment method
+                const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
                 
-                // Add discount line to order summary
-                const orderTotals = document.querySelector('.order-totals');
-                const totalRow = document.querySelector('.order-totals div:last-child');
+                // Get delivery method
+                const deliveryMethod = document.querySelector('input[name="deliveryMethod"]:checked').value;
                 
-                if (orderTotals && totalRow) {
-                    // Check if discount row already exists
-                    let discountRow = document.querySelector('.discount-row');
-                    
-                    if (!discountRow) {
-                        // Create discount row
-                        discountRow = document.createElement('div');
-                        discountRow.className = 'discount-row d-flex justify-content-between mb-2 text-success';
-                        discountRow.innerHTML = `
-                            <span>Discount (10%):</span>
-                            <span id="order-discount">-$${cart.discount.toFixed(2)}</span>
-                        `;
-                        
-                        // Insert before total row
-                        orderTotals.insertBefore(discountRow, totalRow);
-                    } else {
-                        // Update existing discount row
-                        document.getElementById('order-discount').textContent = `-$${cart.discount.toFixed(2)}`;
+                // Create address object based on delivery method
+                let deliveryAddress = null;
+                if (deliveryMethod === 'delivery') {
+                    deliveryAddress = {
+                        street: document.getElementById('address').value,
+                        city: document.getElementById('city').value,
+                        zip: document.getElementById('zip').value
+                    };
+                }
+                
+                // Prepare item data for order submission
+                const orderItems = cart.items.map(item => {
+                    return {
+                        menu_item_id: item.id,
+                        quantity: item.quantity,
+                        notes: item.notes || ''
+                    };
+                });
+                
+                // Ensure cart data is valid
+                if (!cart || !Array.isArray(cart.items) || cart.items.length === 0) {
+                    throw new Error('Your cart is empty. Please add items before placing an order.');
+                }
+                
+                // Make sure we have valid total amounts
+                const safeTotal = parseFloat(cart.total) || 0;
+                const safeSubtotal = parseFloat(cart.subtotal) || 0;
+                const safeTax = parseFloat(cart.tax) || 0;
+                const safeDeliveryFee = parseFloat(cart.deliveryFee) || 0;
+                const safeDiscount = parseFloat(cart.discount) || 0;
+                
+                // Ensure we have the global menuItems list
+                if (!window.menuItems || !Array.isArray(window.menuItems) || window.menuItems.length === 0) {
+                    console.log('Menu items not loaded yet, loading now...');
+                    try {
+                        // Load menu items synchronously
+                        const response = await fetch('/api/menu');
+                        const data = await response.json();
+                        if (data.success) {
+                            window.menuItems = data.data;
+                            console.log('Menu items loaded successfully:', window.menuItems.length);
+                        } else {
+                            console.error('Failed to load menu items:', data.message);
+                            window.showToast('Failed to load menu items. Please try again.', 'error');
+                            return false;
+                        }
+                    } catch (error) {
+                        console.error('Error loading menu items:', error);
+                        window.showToast('Failed to load menu items. Please try again.', 'error');
+                        return false;
                     }
                 }
-            } else {
-                window.showToast('Invalid promo code', 'error');
+                
+                // Create order data object with robust error handling
+                const orderData = {
+                    customer_name: customerName || 'Guest',
+                    customer_email: customerEmail || '',
+                    customer_phone: customerPhone || '',
+                    delivery_method: deliveryMethod || 'pickup',
+                    delivery_address: deliveryAddress || {},
+                    payment_method: paymentMethod || 'cash',
+                    items: orderItems.map(item => {
+                        // Make sure each item has a price and all required fields
+                        const menuItem = window.menuItems.find(menuItem => menuItem.id === item.menu_item_id);
+                        if (!menuItem) {
+                            console.warn(`Menu item not found for ID: ${item.menu_item_id}. Using fallback price.`);
+                        }
+                        return {
+                            menu_item_id: item.menu_item_id,
+                            id: item.menu_item_id, // Include both formats for compatibility
+                            quantity: parseInt(item.quantity) || 1,
+                            price: menuItem ? parseFloat(menuItem.price) : (item.price || 0),
+                            notes: item.notes || ''
+                        };
+                    }),
+                    total_amount: Math.round(safeTotal * 100), // Convert to cents for Stripe
+                    subtotal: Math.round(safeSubtotal * 100), // Convert to cents for Stripe
+                    tax: Math.round(safeTax * 100), // Convert to cents for Stripe
+                    delivery_fee: Math.round(safeDeliveryFee * 100), // Convert to cents for Stripe
+                    discount: Math.round(safeDiscount * 100), // Convert to cents for Stripe
+                    notes: orderNotes || ''
+                };
+                
+                // Log order data for debugging
+                console.log('Submitting order data:', orderData);
+                
+                // Process order with payment
+                const orderResult = await window.submitOrderWithPayment(orderData);
+                
+                if (!orderResult.success) {
+                    throw new Error(orderResult.message || 'Failed to place order');
+                }
+                
+                // Store order number and order ID for confirmation
+                window.orderNumber = orderResult.orderNumber;
+                window.orderId = orderResult.orderId;
+                
+                // Hide step 3, show step 4
+                document.getElementById('payment-section').classList.add('d-none');
+                document.getElementById('confirmation-section').classList.remove('d-none');
+                
+                // Update active step
+                document.getElementById('step-3').classList.remove('active');
+                document.getElementById('step-3').classList.add('completed');
+                document.getElementById('step-4').classList.add('active');
+                
+                // Update confirmation details
+                updateConfirmationDetails(orderResult.orderNumber, orderResult.orderId);
+                
+                // Clear cart after successful order
+                clearCart();
+                
+                // Scroll to top
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                
+                // Show success toast
+                window.showToast('Order placed successfully!', 'success');
+            } catch (error) {
+                console.error('Error placing order:', error);
+                window.showToast(error.message || 'Failed to place order. Please try again.', 'error');
+                
+                // Check if we should retry payment
+                if (error.message && error.message.includes('retry') || (error.retry === true)) {
+                    window.showToast('Payment failed, please retry.', 'error');
+                    placeOrderBtn.disabled = false;
+                    placeOrderBtn.innerHTML = 'Retry Payment <i class="fas fa-check"></i>';
+                } else {
+                    // Re-enable button
+                    placeOrderBtn.disabled = false;
+                    placeOrderBtn.innerHTML = 'Place Order <i class="fas fa-check"></i>';
+                }
             }
         });
+    } else {
+        window.showToast('Please select a payment method', 'error');
     }
 }
