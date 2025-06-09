@@ -17,6 +17,9 @@ const winston = require('winston'); // For logging
 // Import database adapter
 const dbAdapter = require('./src/database/adapter');
 
+// Import database initialization script
+const { initDatabase } = require('./src/database/init-database');
+
 // Import services
 const orderService = require('./src/services/orderService');
 
@@ -207,7 +210,8 @@ app.use((err, req, res, next) => {
 const PORT = process.env.PORT || 3000;
 
 // Initialize database and start server
-dbAdapter.initializeDatabase()
+initDatabase()
+  .then(() => dbAdapter.initializeDatabase())
   .then(async () => {
     try {
       // Create Item_Views table if it doesn't exist
