@@ -10,8 +10,64 @@ let cardElement = null;
 let paymentIntentId = null;
 let orderData = {};
 
+// Explicitly expose the submitOrderWithPayment function to the global window object
+window.submitOrderWithPayment = async function(orderData) {
+    console.log('submitOrderWithPayment called with data:', orderData);
+    try {
+        let paymentResult = { success: true };
+        
+        // Process payment if using credit card
+        if (orderData.payment_method === 'card') {
+            paymentResult = await processPayment(orderData);
+            
+            if (!paymentResult.success) {
+                return {
+                    success: false,
+                    message: paymentResult.error || 'Payment processing failed'
+                };
+            }
+            
+            // Add payment info to order data as token for storage
+            orderData.paymentIntentId = paymentIntentId;
+            orderData.paymentStatus = 'authorized';
+        }
+        
+        // Submit order to server
+        console.log('Sending order data to server:', JSON.stringify(orderData));
+        
+        const response = await fetch('/api/orders', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(orderData)
+        });
+        
+        const result = await response.json();
+        
+        if (!result.success) {
+            throw new Error(result.message || 'Failed to create order');
+        }
+        
+        return {
+            success: true,
+            orderNumber: result.orderNumber || '000000',
+            orderId: result.orderId || 0
+        };
+    } catch (error) {
+        console.error('Error in submitOrderWithPayment:', error);
+        return {
+            success: false,
+            message: error.message || 'An unexpected error occurred'
+        };
+    }
+};
+
+console.log('Payment.js loaded and window.submitOrderWithPayment defined:', typeof window.submitOrderWithPayment);
+
 // Initialize Stripe when the document is ready
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOMContentLoaded event in payment.js');
     // Initialize Stripe
     initializeStripe();
     
