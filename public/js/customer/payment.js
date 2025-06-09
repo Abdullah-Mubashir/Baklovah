@@ -327,7 +327,8 @@ function handlePaymentMethodChange() {
  * @param {Object} orderData - Order data
  * @returns {Promise<Object>} - Order submission result
  */
-async function submitOrderWithPayment(orderData) {
+// Expose this function to the global window object so it can be called from order.js
+window.submitOrderWithPayment = async function(orderData) {
     try {
         let paymentResult = { success: true };
         
