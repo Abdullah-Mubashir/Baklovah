@@ -507,15 +507,11 @@ function initOrderSubmission() {
                 // Get delivery method
                 const deliveryMethod = document.querySelector('input[name="deliveryMethod"]:checked').value;
                 
-                // Create address object based on delivery method
-                let deliveryAddress = null;
-                if (deliveryMethod === 'delivery') {
-                    deliveryAddress = {
-                        street: document.getElementById('address').value,
-                        city: document.getElementById('city').value,
-                        zip: document.getElementById('zip').value
-                    };
-                }
+                // For pickup orders, we don't need delivery address
+                const deliveryAddress = null;
+                
+                // Get pickup time
+                const pickupTime = document.getElementById('pickup-time').value;
                 
                 // Prepare item data for order submission
                 const orderItems = cart.items.map(item => {
@@ -565,9 +561,9 @@ function initOrderSubmission() {
                     customer_name: customerName || 'Guest',
                     customer_email: customerEmail || '',
                     customer_phone: customerPhone || '',
-                    delivery_method: deliveryMethod || 'pickup',
-                    delivery_address: deliveryAddress || {},
-                    payment_method: paymentMethod || 'cash',
+                    delivery_method: 'pickup',
+                    pickup_time: pickupTime || 'asap',
+                    payment_method: 'card', // Force card payment
                     items: orderItems.map(item => {
                         // Make sure each item has a price and all required fields
                         const menuItem = window.menuItems.find(menuItem => menuItem.id === item.menu_item_id);

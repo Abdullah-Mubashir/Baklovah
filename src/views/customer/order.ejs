@@ -52,94 +52,36 @@
                 <!-- Step 1: Select Items -->
                 <div class="card mb-4" id="select-items-section">
                     <div class="card-header bg-primary text-white">
-                        <h3 class="mb-0">Select Your Items</h3>
+                        <h3 class="mb-0">Review Order</h3>
                     </div>
                     <div class="card-body">
-                        <div class="menu-quick-select mb-4">
-                            <h5>Quick Categories</h5>
-                            <div class="d-flex flex-wrap gap-2">
-                                <button class="btn btn-outline-primary category-btn" data-category="popular">Popular Items</button>
-                                <button class="btn btn-outline-primary category-btn" data-category="appetizers">Appetizers</button>
-                                <button class="btn btn-outline-primary category-btn" data-category="main-dishes">Main Dishes</button>
-                                <button class="btn btn-outline-primary category-btn" data-category="sandwiches">Sandwiches</button>
-                                <button class="btn btn-outline-primary category-btn" data-category="desserts">Desserts</button>
-                                <button class="btn btn-outline-primary category-btn" data-category="beverages">Beverages</button>
-                            </div>
-                        </div>
                         
-                        <div class="menu-search mb-4">
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="fas fa-search"></i></span>
-                                <input type="text" class="form-control" id="menu-search" placeholder="Search menu items...">
-                            </div>
-                        </div>
+
                         
                         <div id="menu-items-container">
-                            <!-- Popular Items (Default View) -->
-                            <div class="menu-category" id="popular-items">
-                                <h4 class="mb-3">Popular Items</h4>
-                                <div class="row">
-                                    <!-- Sample items, will be replaced with dynamic content -->
-                                    <div class="col-md-6 mb-3">
-                                        <div class="card h-100 menu-item-card">
-                                            <div class="row g-0">
-                                                <div class="col-4">
-                                                    <img src="/images/customer/placeholder-food.jpg" class="img-fluid rounded-start h-100 object-fit-cover" alt="Chicken Shawarma Plate">
-                                                </div>
-                                                <div class="col-8">
-                                                    <div class="card-body">
-                                                        <div class="d-flex justify-content-between align-items-start">
-                                                            <h5 class="card-title">Chicken Shawarma Plate</h5>
-                                                            <span class="menu-item-price">$15.99</span>
-                                                        </div>
-                                                        <p class="card-text small">Marinated chicken with rice and salad.</p>
-                                                        <div class="d-flex align-items-center">
-                                                            <div class="input-group input-group-sm quantity-control me-2">
-                                                                <button class="btn btn-outline-secondary decrease-qty" type="button">-</button>
-                                                                <input type="number" class="form-control text-center item-qty" value="1" min="1" max="10">
-                                                                <button class="btn btn-outline-secondary increase-qty" type="button">+</button>
-                                                            </div>
-                                                            <button class="btn btn-primary btn-sm add-to-cart-btn" data-item-id="201" data-item-name="Chicken Shawarma Plate" data-item-price="15.99">
-                                                                <i class="fas fa-cart-plus"></i> Add
-                                                            </button>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6 mb-3">
-                                        <div class="card h-100 menu-item-card">
-                                            <div class="row g-0">
-                                                <div class="col-4">
-                                                    <img src="/images/customer/placeholder-food.jpg" class="img-fluid rounded-start h-100 object-fit-cover" alt="Baklava">
-                                                </div>
-                                                <div class="col-8">
-                                                    <div class="card-body">
-                                                        <div class="d-flex justify-content-between align-items-start">
-                                                            <h5 class="card-title">Baklava</h5>
-                                                            <span class="menu-item-price">$4.99</span>
-                                                        </div>
-                                                        <p class="card-text small">Layers of phyllo dough with nuts and honey.</p>
-                                                        <div class="d-flex align-items-center">
-                                                            <div class="input-group input-group-sm quantity-control me-2">
-                                                                <button class="btn btn-outline-secondary decrease-qty" type="button">-</button>
-                                                                <input type="number" class="form-control text-center item-qty" value="1" min="1" max="10">
-                                                                <button class="btn btn-outline-secondary increase-qty" type="button">+</button>
-                                                            </div>
-                                                            <button class="btn btn-primary btn-sm add-to-cart-btn" data-item-id="401" data-item-name="Baklava" data-item-price="4.99">
-                                                                <i class="fas fa-cart-plus"></i> Add
-                                                            </button>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
+                            <!-- Items Added (Cart Items) -->
+                            <div class="menu-category" id="cart-items-section">
+                                <h4 class="mb-3">Items Added</h4>
+                                <div class="row" id="cart-items-display">
+                                    <!-- Cart items will be dynamically inserted here -->
+                                    <div class="col-12 text-center empty-cart-message-main">
+                                        <i class="fas fa-shopping-basket fa-3x my-3"></i>
+                                        <p>Your cart is empty</p>
+                                        <a href="#" class="btn btn-primary show-popular-items">Browse Popular Items</a>
                                     </div>
                                 </div>
                             </div>
                             
-                            <!-- Other categories will be loaded dynamically -->
+                            <!-- Popular Items (Secondary View) -->
+                            <div class="menu-category" id="popular-items" style="display: none;">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <h4 class="mb-0">Popular Items</h4>
+                                    <button class="btn btn-sm btn-outline-primary show-cart-items">Back to Cart Items</button>
+                                </div>
+                                <div class="row" id="popular-items-container">
+                                    <!-- Popular items will be dynamically loaded here -->
+                                </div>
+                            </div>
                         </div>
                         
                         <div class="text-end mt-4">
@@ -155,13 +97,9 @@
                     </div>
                     <div class="card-body">
                         <div class="delivery-options mb-4">
-                            <h5>Delivery Method</h5>
+                            <h5>Order Method</h5>
                             <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" name="deliveryMethod" id="delivery" value="delivery" checked>
-                                <label class="form-check-label" for="delivery">Delivery</label>
-                            </div>
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" name="deliveryMethod" id="pickup" value="pickup">
+                                <input class="form-check-input" type="radio" name="deliveryMethod" id="pickup" value="pickup" checked>
                                 <label class="form-check-label" for="pickup">Pickup</label>
                             </div>
                         </div>
@@ -170,44 +108,19 @@
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <label for="name" class="form-label">Full Name</label>
-                                    <input type="text" class="form-control" id="name" required>
+                                    <input type="text" class="form-control" id="name" name="name" required>
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label for="phone" class="form-label">Phone Number</label>
-                                    <input type="tel" class="form-control" id="phone" required>
+                                    <input type="tel" class="form-control" id="phone" name="phone" required>
                                 </div>
                             </div>
                             <div class="mb-3">
                                 <label for="email" class="form-label">Email Address</label>
-                                <input type="email" class="form-control" id="email" required>
+                                <input type="email" class="form-control" id="email" name="email" required>
                             </div>
                             
-                            <div id="delivery-address-section">
-                                <div class="mb-3">
-                                    <label for="address" class="form-label">Street Address</label>
-                                    <input type="text" class="form-control" id="address" required>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-4 mb-3">
-                                        <label for="city" class="form-label">City</label>
-                                        <input type="text" class="form-control" id="city" required>
-                                    </div>
-                                    <div class="col-md-4 mb-3">
-                                        <label for="state" class="form-label">State</label>
-                                        <input type="text" class="form-control" id="state" required>
-                                    </div>
-                                    <div class="col-md-4 mb-3">
-                                        <label for="zip" class="form-label">ZIP Code</label>
-                                        <input type="text" class="form-control" id="zip" required>
-                                    </div>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="delivery-instructions" class="form-label">Delivery Instructions (Optional)</label>
-                                    <textarea class="form-control" id="delivery-instructions" rows="2"></textarea>
-                                </div>
-                            </div>
-                            
-                            <div id="pickup-section" class="d-none">
+                            <div id="pickup-section">
                                 <div class="mb-3">
                                     <label for="pickup-time" class="form-label">Pickup Time</label>
                                     <select class="form-select" id="pickup-time" required>
@@ -221,8 +134,8 @@
                             </div>
                             
                             <div class="mb-3">
-                                <label for="order-notes" class="form-label">Order Notes (Optional)</label>
-                                <textarea class="form-control" id="order-notes" rows="2"></textarea>
+                                <label for="orderNotes" class="form-label">Order Notes (Optional)</label>
+                                <textarea class="form-control" id="orderNotes" name="orderNotes" rows="3"></textarea>
                             </div>
                         </form>
                         
@@ -244,10 +157,6 @@
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="radio" name="paymentMethod" id="card" value="card" checked>
                                 <label class="form-check-label" for="card">Credit/Debit Card</label>
-                            </div>
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" name="paymentMethod" id="cash" value="cash">
-                                <label class="form-check-label" for="cash">Cash on Delivery</label>
                             </div>
                         </div>
                         
@@ -355,4 +264,4 @@
     </div>
 </section>
 
-<%- include('./partials/footer', { additionalScripts: ['/js/customer/order.js'] }) %>
+<%- include('./partials/footer', { additionalScripts: ['/js/customer/payment.js', '/js/customer/order.js'] }) %>
