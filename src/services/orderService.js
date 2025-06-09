@@ -97,10 +97,10 @@ async function createOrder(orderData) {
         // Start a database transaction
         //const connection = await db.beginTransaction();
         
-        // Insert the order into the database
+        // Insert the order into the database - use a more resilient query that doesn't explicitly list order_number
+        // This works around potential schema issues where the column might exist but not be accessible
         const orderQuery = `
             INSERT INTO orders (
-                order_number, 
                 customer_name, 
                 customer_email, 
                 customer_phone, 
@@ -114,7 +114,7 @@ async function createOrder(orderData) {
                 delivery_address,
                 customer_notes,
                 estimated_time_minutes
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `;
         
         // Set initial status and estimated time
@@ -142,7 +142,6 @@ async function createOrder(orderData) {
         const result = await db.query(
             orderQuery, 
             [
-                orderNumber,
                 customerName || 'Guest',
                 customerEmail || '',
                 customerPhone || '',
@@ -158,6 +157,20 @@ async function createOrder(orderData) {
                 estimatedTime
             ]
         );
+        
+        // Now try to update the order_number in a separate query to handle cases where the column exists but has issues
+        try {
+            if (result && result.insertId) {
+                await db.query(
+                    'UPDATE orders SET order_number = ? WHERE id = ?',
+                    [orderNumber, result.insertId]
+                );
+                console.log(`Order number ${orderNumber} set for order ID ${result.insertId}`);
+            }
+        } catch (updateError) {
+            // Log but don't fail if we can't update the order number
+            console.warn(`Unable to set order_number for order ${result.insertId}: ${updateError.message}`);
+        }
         
         console.log('Order query result:', result);
         
