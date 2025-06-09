@@ -125,7 +125,11 @@ app.get('/menu', (req, res) => {
 });
 
 app.get('/order', (req, res) => {
-  res.render('customer/order', { title: 'Order Online', currentPath: '/order' });
+  res.render('customer/order', { 
+    title: 'Order Online', 
+    currentPath: '/order',
+    stripePublishableKey: process.env.STRIPE_PUBLISHABLE_KEY || 'pk_test_your_key'
+  });
 });
 
 app.get('/about', (req, res) => {

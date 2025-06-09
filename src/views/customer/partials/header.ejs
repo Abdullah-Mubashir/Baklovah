@@ -12,6 +12,10 @@
     <link rel="stylesheet" href="/css/customer/style.css">
     <!-- Favicon -->
     <link rel="icon" href="/images/favicon.ico" type="image/x-icon">
+    <!-- Stripe.js -->
+    <script src="https://js.stripe.com/v3/"></script>
+    <!-- Stripe public key -->
+    <meta name="stripe-public-key" content="<%= typeof stripePublishableKey !== 'undefined' ? stripePublishableKey : '' %>" />
     <% if (typeof additionalStyles !== 'undefined' && additionalStyles) { %>
         <% additionalStyles.forEach(style => { %>
             <link rel="stylesheet" href="<%= style %>">
